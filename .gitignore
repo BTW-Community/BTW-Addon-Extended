@@ -24,7 +24,6 @@ src/minecraft/net/minecraft/src/WorldProvider.java
 src/minecraft_server/net/minecraft/src/BlockPane.java
 src/minecraft_server/net/minecraft/src/ContainerRepair.java
 src/minecraft_server/net/minecraft/src/DataWatcher.java
-src/minecraft_server/net/minecraft/src/DedicatedPlayerList.java
 src/minecraft_server/net/minecraft/src/SlotRepair.java
 src/minecraft_server/net/minecraft/src/TileEntityChest.java
 src/minecraft_server/net/minecraft/src/TileEntitySign.java
@@ -442,7 +441,6 @@ src/minecraft/net/minecraft/src/CreativeTabTransport.java
 src/minecraft/net/minecraft/src/CreativeTabs.java
 src/minecraft/net/minecraft/src/CryptManager.java
 src/minecraft/net/minecraft/src/DamageSource.java
-src/minecraft/net/minecraft/src/DedicatedPlayerList.java
 src/minecraft/net/minecraft/src/DedicatedServer.java
 src/minecraft/net/minecraft/src/DedicatedServerCommandThread.java
 src/minecraft/net/minecraft/src/DedicatedServerListenThread.java
@@ -1619,7 +1617,6 @@ src/minecraft/net/minecraft/src/ImageBufferDownload.java
 src/minecraft/net/minecraft/src/IntCache.java
 src/minecraft/net/minecraft/src/IntHashMap.java
 src/minecraft/net/minecraft/src/IntHashMapEntry.java
-src/minecraft/net/minecraft/src/IntegratedPlayerList.java
 src/minecraft/net/minecraft/src/IntegratedSer#
 src/minecraft/net/minecraft/src/IntegratedServer.java
 src/minecraft/net/minecraft/src/IntegratedServerListenThread.java

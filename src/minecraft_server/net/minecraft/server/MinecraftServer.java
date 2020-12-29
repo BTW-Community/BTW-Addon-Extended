@@ -20,8 +20,6 @@ import net.minecraft.src.ChunkCoordinates;
 import net.minecraft.src.CommandBase;
 import net.minecraft.src.ConvertingProgressUpdate;
 import net.minecraft.src.CrashReport;
-import net.minecraft.src.DawnAddonHandler;
-import net.minecraft.src.DawnServerCommandManager;
 import net.minecraft.src.DedicatedServer;
 import net.minecraft.src.DemoWorldServer;
 import net.minecraft.src.DispenserBehaviors;
@@ -162,7 +160,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
     {
         mcServer = this;
         this.anvilFile = par1File;
-        this.commandManager = new DawnServerCommandManager();
+        this.commandManager = new ServerCommandManager();
         this.anvilConverterForAnvilFile = new AnvilSaveConverter(par1File);
         this.registerDispenseBehaviors();
     }
@@ -591,11 +589,6 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
 
         this.theProfiler.endSection();
         this.theProfiler.endSection();
-        
-        if (DawnAddonHandler.getAwaitingLoginAck()) {
-        	DawnAddonHandler.incrementTicksSinceAckRequested();
-        	DawnAddonHandler.handleAckCheck();
-        }
     }
 
     public void updateTimeLightAndEntities()
