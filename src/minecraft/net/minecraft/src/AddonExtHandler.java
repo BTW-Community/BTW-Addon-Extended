@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.MinecraftServer;
 
-public class DawnAddonHandler {
+public class AddonExtHandler {
 	private static NetServerHandler netServerHandler;
 	private static ArrayList<String> ackCheckFails = new ArrayList<String>();
 
@@ -13,25 +13,15 @@ public class DawnAddonHandler {
 		netServerHandler = serverHandler;
 
 		for (Object mod : FCAddOnHandler.m_ModList) {
-			if (mod instanceof DawnAddon) {
-				((DawnAddon) mod).serverPlayerConnectionInitialized(serverHandler, playerMP);
+			if (mod instanceof AddonExt) {
+				((AddonExt) mod).serverPlayerConnectionInitialized(serverHandler, playerMP);
 			}
 		}
-	}
-
-	public static boolean serverCustomPacketReceived(MinecraftServer mcServer, Packet250CustomPayload packet) {
-		for (Object mod : FCAddOnHandler.m_ModList) {
-			if (mod instanceof DawnAddon && ((DawnAddon) mod).serverCustomPacketReceived(mcServer, packet, netServerHandler)) {
-				return true;
-			}
-		}
-
-		return false;
 	}
 
 	public static boolean getAwaitingLoginAck() {
 		for (Object mod : FCAddOnHandler.m_ModList) {
-			if (mod instanceof DawnAddon && ((DawnAddon) mod).getAwaitingLoginAck()) {
+			if (mod instanceof AddonExt && ((AddonExt) mod).getAwaitingLoginAck()) {
 				return true;
 			}
 		}
@@ -41,16 +31,16 @@ public class DawnAddonHandler {
 
 	public static void incrementTicksSinceAckRequested() {
 		for (Object mod : FCAddOnHandler.m_ModList) {
-			if (mod instanceof DawnAddon) {
-				((DawnAddon) mod).incrementTicksSinceAckRequested();
+			if (mod instanceof AddonExt) {
+				((AddonExt) mod).incrementTicksSinceAckRequested();
 			}
 		}
 	}
 
 	public static void handleAckCheck() {
 		for (Object mod : FCAddOnHandler.m_ModList) {
-			if (mod instanceof DawnAddon && !((DawnAddon) mod).handleAckCheck()) {
-				ackCheckFails.add(((DawnAddon) mod).getName());
+			if (mod instanceof AddonExt && !((AddonExt) mod).handleAckCheck()) {
+				ackCheckFails.add(((AddonExt) mod).getName());
 			}
 		}
 
@@ -70,7 +60,7 @@ public class DawnAddonHandler {
 	//Client only
 	public static boolean interceptCustomClientPacket(Minecraft mc, Packet250CustomPayload packet) {
 		for (Object mod : FCAddOnHandler.m_ModList) {
-			if (mod instanceof DawnAddon && ((DawnAddon) mod).interceptCustomClientPacket(mc, packet)) {
+			if (mod instanceof AddonExt && ((AddonExt) mod).interceptCustomClientPacket(mc, packet)) {
 				return true;
 			}
 		}
@@ -78,10 +68,10 @@ public class DawnAddonHandler {
 		return false;
 	}
 
-	public static EntityFX spawnCustomParticle(Minecraft mc, World world, String particleType, double x, double y, double z, double velX, double velY, double velZ) {
+	public static EntityFX spawnCustomParticle(World world, String particleType, double x, double y, double z, double velX, double velY, double velZ) {
 		for (Object mod : FCAddOnHandler.m_ModList) {
-			if (mod instanceof DawnAddon) {
-				EntityFX particle = ((DawnAddon) mod).spawnCustomParticle(mc, world, particleType, x, y, z, velX, velY, velZ);
+			if (mod instanceof AddonExt) {
+				EntityFX particle = ((AddonExt) mod).spawnCustomParticle(world, particleType, x, y, z, velX, velY, velZ);
 				if (particle != null)
 					return particle;
 			}

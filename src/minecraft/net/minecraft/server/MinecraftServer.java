@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+
+import net.minecraft.src.AddonExtHandler;
 import net.minecraft.src.AnvilSaveConverter;
 import net.minecraft.src.AxisAlignedBB;
 import net.minecraft.src.CallableIsServerModded;
@@ -18,9 +20,6 @@ import net.minecraft.src.ChunkCoordinates;
 import net.minecraft.src.CommandBase;
 import net.minecraft.src.ConvertingProgressUpdate;
 import net.minecraft.src.CrashReport;
-import net.minecraft.src.DawnAddonHandler;
-import net.minecraft.src.DawnServerCommandManager;
-import net.minecraft.src.DawnUtilsReflection;
 import net.minecraft.src.DemoWorldServer;
 import net.minecraft.src.DispenserBehaviors;
 import net.minecraft.src.EntityPlayer;
@@ -161,7 +160,7 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
     {
         mcServer = this;
         this.anvilFile = par1File;
-        this.commandManager = new DawnServerCommandManager();
+        this.commandManager = new ServerCommandManager();
         this.anvilConverterForAnvilFile = new AnvilSaveConverter(par1File);
         this.registerDispenseBehaviors();
     }
@@ -569,6 +568,11 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
             this.saveAllWorlds(true);
             this.theProfiler.endSection();
         }
+        
+        if (AddonExtHandler.getAwaitingLoginAck()) {
+        	AddonExtHandler.incrementTicksSinceAckRequested();
+        	AddonExtHandler.handleAckCheck();
+        }
 
         this.theProfiler.startSection("tallying");
         this.tickTimeArray[this.tickCounter % 100] = System.nanoTime() - var1;
@@ -595,11 +599,6 @@ public abstract class MinecraftServer implements ICommandSender, Runnable, IPlay
 
         this.theProfiler.endSection();
         this.theProfiler.endSection();
-        
-        if (DawnAddonHandler.getAwaitingLoginAck()) {
-        	DawnAddonHandler.incrementTicksSinceAckRequested();
-        	DawnAddonHandler.handleAckCheck();
-        }
     }
 
     public void updateTimeLightAndEntities()

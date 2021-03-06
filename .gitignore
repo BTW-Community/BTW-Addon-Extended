@@ -9,6 +9,7 @@ src/minecraft/net/minecraft/src/DataWatcher.java
 src/minecraft/net/minecraft/src/EntityClientPlayerMP.java
 src/minecraft/net/minecraft/src/GUIEditSign.java
 src/minecraft/net/minecraft/src/GUIRepair.java
+src/minecraft/net/minecraft/src/DedicatedPlayerList.java
 src/minecraft/net/minecraft/src/IntegratedPlayerList.java
 src/minecraft/net/minecraft/src/MinecraftAppletImpl.java
 src/minecraft/net/minecraft/src/Render.java
@@ -16,6 +17,8 @@ src/minecraft/net/minecraft/src/RenderItemFrame.java
 src/minecraft/net/minecraft/src/SlotRepair.java
 src/minecraft/net/minecraft/src/TileEntityChest.java
 src/minecraft/net/minecraft/src/TileEntitySignRenderer.java
+src/minecraft/net/minecraft/src/ThreadConnectToServer.java
+src/minecraft/net/minecraft/src/ThreadOnlineConnect.java
 src/minecraft/net/minecraft/src/WorldRenderer.java
 src/minecraft/net/minecraft/src/StructureVillageStart.java
 src/minecraft/net/minecraft/src/StructureScatteredFeatureStart.java
@@ -24,9 +27,12 @@ src/minecraft/net/minecraft/src/WorldProvider.java
 src/minecraft_server/net/minecraft/src/BlockPane.java
 src/minecraft_server/net/minecraft/src/ContainerRepair.java
 src/minecraft_server/net/minecraft/src/DataWatcher.java
+src/minecraft_server/net/minecraft/src/DedicatedPlayerList.java
 src/minecraft_server/net/minecraft/src/SlotRepair.java
 src/minecraft_server/net/minecraft/src/TileEntityChest.java
 src/minecraft_server/net/minecraft/src/TileEntitySign.java
+src/minecraft_server/net/minecraft/src/ThreadConnectToServer.java
+src/minecraft_server/net/minecraft/src/ThreadOnlineConnect.java
 CHANGELOG
 LICENSE.txt
 bin/
@@ -96,7 +102,6 @@ src/minecraft/net/minecraft/src/BiomeGenRiver.java
 src/minecraft/net/minecraft/src/BiomeGenSnow.java
 src/minecraft/net/minecraft/src/BiomeGenSwamp.java
 src/minecraft/net/minecraft/src/BiomeGenTaiga.java
-src/minecraft/net/minecraft/src/Block.java
 src/minecraft/net/minecraft/src/BlockBasePressurePlate.java
 src/minecraft/net/minecraft/src/BlockBaseRailLogic.java
 src/minecraft/net/minecraft/src/BlockBeacon.java
@@ -1629,7 +1634,6 @@ src/minecraft/net/minecraft/src/InventoryLargeChest.java
 src/minecraft/net/minecraft/src/InventoryMerchant.java
 src/minecraft/net/minecraft/src/InventoryPlayer.java
 src/minecraft/net/minecraft/src/InventoryRepair.java
-src/minecraft/net/minecraft/src/Item.java
 src/minecraft/net/minecraft/src/ItemAnvilBlock.java
 src/minecraft/net/minecraft/src/ItemAppleGold.java
 src/minecraft/net/minecraft/src/ItemArmor.java
@@ -1803,7 +1807,6 @@ src/minecraft/net/minecraft/src/NBTTagList.java
 src/minecraft/net/minecraft/src/NBTTagLong.java
 src/minecraft/net/minecraft/src/NBTTagShort.java
 src/minecraft/net/minecraft/src/NBTTagString.java
-src/minecraft/net/minecraft/src/NetClientHandler.java
 src/minecraft/net/minecraft/src/NetClientWebTextures.java
 src/minecraft/net/minecraft/src/NetHandler.java
 src/minecraft/net/minecraft/src/NetLoginHandler.java
@@ -1979,7 +1982,6 @@ src/minecraft/net/minecraft/src/RenderFireball.java
 src/minecraft/net/minecraft/src/RenderFish.java
 src/minecraft/net/minecraft/src/RenderGhast.java
 src/minecraft/net/minecraft/src/RenderGiantZombie.java
-src/minecraft/net/minecraft/src/RenderGlobal.java
 src/minecraft/net/minecraft/src/RenderGlobal.#
 src/minecraft/net/minecraft/src/RenderGlobal.~
 src/minecraft/net/minecraft/src/RenderHelper.java
@@ -2045,10 +2047,8 @@ src/minecraft/net/minecraft/src/ServerAddress.java
 src/minecraft/net/minecraft/src/ServerBlockEvent.java
 src/minecraft/net/minecraft/src/ServerBlockEventList.java
 src/minecraft/net/minecraft/src/ServerCommand.java
-src/minecraft/net/minecraft/src/ServerCommandManager.java
 src/minecraft/net/minecraft/src/ServerCommandScoreboard.java
 src/minecraft/net/minecraft/src/ServerCommandTestFor.java
-src/minecraft/net/minecraft/src/ServerConfigurationManager.java
 src/minecraft/net/minecraft/src/ServerData.java
 src/minecraft/net/minecraft/src/ServerList.java
 src/minecraft/net/minecraft/src/ServerListenThread.java
@@ -2290,7 +2290,6 @@ src/minecraft_server/net/minecraft/src/BiomeGenRiver.java
 src/minecraft_server/net/minecraft/src/BiomeGenSnow.java
 src/minecraft_server/net/minecraft/src/BiomeGenSwamp.java
 src/minecraft_server/net/minecraft/src/BiomeGenTaiga.java
-src/minecraft_server/net/minecraft/src/Block.java
 src/minecraft_server/net/minecraft/src/BlockAnvil.java
 src/minecraft_server/net/minecraft/src/BlockBasePressurePlate.java
 src/minecraft_server/net/minecraft/src/BlockBaseRailLogic.java
@@ -3581,7 +3580,6 @@ src/minecraft_server/net/minecraft/src/InventoryLargeChest.java
 src/minecraft_server/net/minecraft/src/InventoryMerchant.java
 src/minecraft_server/net/minecraft/src/InventoryPlayer.java
 src/minecraft_server/net/minecraft/src/InventoryRepair.java
-src/minecraft_server/net/minecraft/src/Item.java
 src/minecraft_server/net/minecraft/src/ItemAnvilBlock.java
 src/minecraft_server/net/minecraft/src/ItemAppleGold.java
 src/minecraft_server/net/minecraft/src/ItemArmor.java
@@ -3851,10 +3849,8 @@ src/minecraft_server/net/minecraft/src/ScoreboardSaveData.java
 src/minecraft_server/net/minecraft/src/ServerBlockEvent.java
 src/minecraft_server/net/minecraft/src/ServerBlockEventList.java
 src/minecraft_server/net/minecraft/src/ServerCommand.java
-src/minecraft_server/net/minecraft/src/ServerCommandManager.java
 src/minecraft_server/net/minecraft/src/ServerCommandScoreboard.java
 src/minecraft_server/net/minecraft/src/ServerCommandTestFor.java
-src/minecraft_server/net/minecraft/src/ServerConfigurationManager.java
 src/minecraft_server/net/minecraft/src/ServerGUI.java
 src/minecraft_server/net/minecraft/src/ServerGuiCommandListener.java
 src/minecraft_server/net/minecraft/src/ServerGuiFocusAdapter.java

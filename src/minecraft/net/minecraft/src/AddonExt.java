@@ -9,10 +9,11 @@ import java.io.IOException;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.MinecraftServer;
 
-public abstract class DawnAddon extends FCAddOn {
+public abstract class AddonExt extends FCAddOn {
 	private String addonName;
 	private String versionString;
 
+	/** Set this to false if your addon is client only, or if you implement your own version checking */
 	protected boolean shouldVersionCheck = true;
 
 	private boolean awaitingLoginAck = false;
@@ -22,7 +23,12 @@ public abstract class DawnAddon extends FCAddOn {
 	public final String addonCustomPacketChannelVersionCheck;
 	public final String addonCustomPacketChannelVersionCheckAck;
 
-	public DawnAddon(String addonName, String versionString, String prefix) {
+	/**
+	 * @param addonName Used for display in version checking
+	 * @param versionString Used for version checking
+	 * @param prefix Used for translations and packet channels
+	 */
+	public AddonExt(String addonName, String versionString, String prefix) {
 		this.addonName = addonName;
 		this.versionString = versionString;
 		this.addonCustomPacketChannelVersionCheck = prefix + "|VC";
@@ -31,6 +37,7 @@ public abstract class DawnAddon extends FCAddOn {
 
 	/**
 	 * Called when a player joins the world
+	 * Used for version checking
 	 */
 	public void serverPlayerConnectionInitialized(NetServerHandler serverHandler, EntityPlayerMP playerMP) {
 		if (!MinecraftServer.getServer().isSinglePlayer())
@@ -62,10 +69,11 @@ public abstract class DawnAddon extends FCAddOn {
 
 	/**
 	 * Called when a custom packet is received by the NetServerHandler
-	 * If overriding, make sure to make a call to the super method
+	 * If overriding, make sure to make a call to the super method if you want to maintain version checking
 	 * @return true if packet was handled, false otherwise
 	 */
-	public boolean serverCustomPacketReceived(MinecraftServer mcServer, Packet250CustomPayload packet, NetServerHandler serverHandler) {
+	@Override
+	public boolean ServerCustomPacketReceived(NetServerHandler serverHandler, Packet250CustomPayload packet) {
 		if (addonCustomPacketChannelVersionCheckAck.equals(packet.channel)) {
 			FCUtilsWorld.SendPacketToPlayer(serverHandler, new Packet3Chat("\u00a7f" + addonName + " version check successful."));
 			awaitingLoginAck = false;
@@ -166,7 +174,7 @@ public abstract class DawnAddon extends FCAddOn {
 	 * Spawns a custom particle based on a string specifying the type
 	 * @return the spawned particle, or null if type is not handled
 	 */
-	public EntityFX spawnCustomParticle(Minecraft mc, World world, String particleType, double x, double y, double z, double velX, double velY, double velZ) {
+	public EntityFX spawnCustomParticle(World world, String particleType, double x, double y, double z, double velX, double velY, double velZ) {
 		return null;
 	}
 }
