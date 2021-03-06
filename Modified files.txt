@@ -1,8 +1,8 @@
 server/MinecraftServer
-DedicatedPlayerList
-IntegratedPlayerList**
-MinecraftApplImpl
-ThreadConnectToServer
-ThreadOnlineConnect
-
-** - client only
+Block
+EntityList
+Item
+NetClientHandler
+RenderGlobal
+ServerCommandManager
+ServerConfigurationManager

@@ -1,0 +1,13 @@
+## AddonExt ##
+- Version display / checking on login
+- Intercept a client packet to replace functionality
+- Spawn custom particles
+
+## Block ##
+- Replacement functionality added with checks for multiple replacement
+
+## EntityList ##
+- Entity map replacement in a safe manner (won't crash if you miss a reference to an old class)
+
+## Item ##
+- Replacement functionality added with checks for multiple replacement
