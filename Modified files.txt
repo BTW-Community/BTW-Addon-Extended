@@ -3,6 +3,7 @@ Block
 EntityList
 Item
 NetClientHandler
+RenderBlocks
 RenderGlobal
 ServerCommandManager
 ServerConfigurationManager

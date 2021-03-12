@@ -305,6 +305,12 @@ public class Block
     private int m_iBirdItemFoodValue = 0;
     private int m_iPigItemFoodValue = 0;
     public RenderBlocks m_currentBlockRenderer = null;
+    
+    //ADDON EXTENDED
+    private int idDroppedOnStonecut = -1;
+    private int countDroppedOnStonecut = 0;
+    private int metaDroppedOnStonecut = 0;
+    //ADDON EXTENDED
 
     protected Block(int par1, Material par2Material)
     {
@@ -2954,6 +2960,76 @@ public class Block
     		
     		return newBlock;
     	}
+    }
+    
+    public void setItemIDDroppedOnStonecutter(int id) {
+    	this.idDroppedOnStonecut = id;
+    }
+    
+    public void setItemCountDroppedOnStonecutter(int count) {
+    	this.countDroppedOnStonecut = count;
+    }
+    
+    public void setItemDamageDroppedOnStonecutter(int meta) {
+    	this.metaDroppedOnStonecut = meta;
+    }
+
+    public int getItemIDDroppedOnStonecutter(World world, int x, int y, int z)
+    {
+        return this.idDroppedOnStonecut;
+    }
+
+    public int getItemCountDroppedOnStonecutter(World world, int x, int y, int z)
+    {
+        return this.countDroppedOnStonecut;
+    }
+
+    public int getItemDamageDroppedOnStonecutter(World world, int x, int y, int z)
+    {
+        return this.metaDroppedOnStonecut;
+    }
+
+    public boolean doesBlockDropAsItemOnStonecutter(World world, int x, int y, int z)
+    {
+        return this.blockMaterial.isSolid();
+    }
+
+    public boolean doesBlockBreakStonecutter(World world, int x, int y, int z)
+    {
+        return this.blockMaterial.isSolid() && this.blockMaterial != Material.rock && this.blockMaterial != Material.snow && this.blockMaterial != Material.craftedSnow && this.blockMaterial != FCBetterThanWolves.fcMaterialAsh && this.blockMaterial != FCBetterThanWolves.fcMaterialNetherRock;
+    }
+
+    public boolean onBlockStonecut(World world, int x, int y, int z, int stonecutterX, int stonecutterY, int stonecutterZ)
+    {
+        return this.onBlockStonecut(world, x, y, z);
+    }
+
+    public boolean onBlockStonecut(World world, int x, int y, int z)
+    {
+        int var5 = this.getItemIDDroppedOnStonecutter(world, x, y, z);
+
+        if (var5 >= 0)
+        {
+            int var6 = this.getItemCountDroppedOnStonecutter(world, x, y, z);
+            int var7 = this.getItemDamageDroppedOnStonecutter(world, x, y, z);
+
+            for (int var8 = 0; var8 < var6; ++var8)
+            {
+                FCUtilsItem.EjectSingleItemWithRandomOffset(world, x, y, z, var5, var7);
+            }
+        }
+        else
+        {
+            if (!this.doesBlockDropAsItemOnStonecutter(world, x, y, z))
+            {
+                return false;
+            }
+
+            this.dropBlockAsItem(world, x, y, z, world.getBlockMetadata(x, y, z), 0);
+        }
+
+        world.setBlockToAir(x, y, z);
+        return true;
     }
     // ADDON EXTENDED //
 
