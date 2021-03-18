@@ -1,7 +1,9 @@
 src deco/
 
-src/minecraft/net/minecraft/src/FC*
-src/minecraft_server/net/minecraft/src/FC*
+src/minecraft/net/minecraft/src/FCItemSign.java
+src/minecraft/net/minecraft/src/FCItemStone.java
+src/minecraft_server/net/minecraft/src/FCItemSign.java
+src/minecraft_server/net/minecraft/src/FCItemStone.java
 
 src/minecraft/net/minecraft/src/BlockPane.java
 src/minecraft/net/minecraft/src/ContainerRepair.java
@@ -1156,7 +1158,6 @@ src/minecraft/net/minecraft/src/FCEntitySpider.java
 src/minecraft/net/minecraft/src/FCEntitySpiderWeb.java
 src/minecraft/net/minecraft/src/FCEntitySquid.java
 src/minecraft/net/minecraft/src/FCEntityUrn.java
-src/minecraft/net/minecraft/src/FCEntityVillager.java
 src/minecraft/net/minecraft/src/FCEntityWaterWheel.java
 src/minecraft/net/minecraft/src/FCEntityWindMill.java
 src/minecraft/net/minecraft/src/FCEntityWindMillVertical.java
@@ -3212,7 +3213,6 @@ src/minecraft_server/net/minecraft/src/FCEntitySpider.java
 src/minecraft_server/net/minecraft/src/FCEntitySpiderWeb.java
 src/minecraft_server/net/minecraft/src/FCEntitySquid.java
 src/minecraft_server/net/minecraft/src/FCEntityUrn.java
-src/minecraft_server/net/minecraft/src/FCEntityVillager.java
 src/minecraft_server/net/minecraft/src/FCEntityWaterWheel.java
 src/minecraft_server/net/minecraft/src/FCEntityWindMill.java
 src/minecraft_server/net/minecraft/src/FCEntityWindMillVertical.java
