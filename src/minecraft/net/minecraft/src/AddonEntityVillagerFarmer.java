@@ -64,6 +64,16 @@ public class AddonEntityVillagerFarmer extends FCEntityVillager {
 				return null;
 		}
 	}
+
+	@Override
+    protected boolean isInvalidProfessionTrade(MerchantRecipe trade) {
+		return trade.getItemToBuy().itemID == FCBetterThanWolves.fcPlanter.blockID;
+    }
+
+	@Override
+	protected MerchantRecipe getProfessionDefaultTrade() {
+		return new MerchantRecipe(new ItemStack(FCBetterThanWolves.fcBlockDirtLoose.blockID, this.rand.nextInt(17) + 48, 0), new ItemStack(Item.emerald.itemID, 1, 0), 1);
+	}
 	
 	//CLIENT ONLY
 	@Override

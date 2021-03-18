@@ -73,6 +73,16 @@ public class AddonEntityVillagerButcher extends FCEntityVillager {
 
         return availableTrades;
 	}
+
+	@Override
+    protected boolean isInvalidProfessionTrade(MerchantRecipe trade) {
+    	return trade.getItemToBuy().itemID == FCBetterThanWolves.fcAestheticNonOpaque.blockID && trade.getItemToBuy().getItemDamage() == 12;
+    }
+
+	@Override
+	protected MerchantRecipe getProfessionDefaultTrade() {
+		return new MerchantRecipe(new ItemStack(Item.emerald.itemID, 1, 0), new ItemStack(Item.beefRaw.itemID, this.rand.nextInt(3) + 7, 0), 1);
+	}
 	
 	//CLIENT ONLY
 	public String getTexture() {

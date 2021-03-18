@@ -66,6 +66,16 @@ public class AddonEntityVillagerBlacksmith extends FCEntityVillager {
                 return null;
         }
 	}
+
+	@Override
+    protected boolean isInvalidProfessionTrade(MerchantRecipe trade) {
+		return trade.getItemToBuy().itemID == FCBetterThanWolves.fcAnvil.blockID && trade.getItemToSell().itemID == Item.emerald.itemID;
+    }
+
+	@Override
+	protected MerchantRecipe getProfessionDefaultTrade() {
+		return new MerchantRecipe(new ItemStack(Item.coal.itemID, this.rand.nextInt(9) + 16, 0), new ItemStack(Item.emerald.itemID, 1, 0), 1);
+	}
 	
 	//CLIENT ONLY
 	public String getTexture() {

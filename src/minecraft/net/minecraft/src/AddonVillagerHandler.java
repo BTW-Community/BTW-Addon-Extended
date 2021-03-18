@@ -16,6 +16,31 @@ public class AddonVillagerHandler extends FCAddOn {
 	@Override
 	public void Initialize() {
 		FCAddOnHandler.LogMessage("Initializing Villager Handler...");
+		initFarmer();
+		initLibrarian();
+		initPriest();
+		initBlacksmith();
+		initButcher();
+	}
+	
+	public void initFarmer() {
+		
+	}
+	
+	public void initLibrarian() {
+		
+	}
+	
+	public void initPriest() {
+		
+	}
+	
+	public void initBlacksmith() {
+		
+	}
+	
+	public void initButcher() {
+		
 	}
 	
 	public static AddonVillagerHandler getInstance() {

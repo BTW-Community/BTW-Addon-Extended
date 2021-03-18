@@ -66,6 +66,28 @@ public class AddonEntityVillagerPriest extends FCEntityVillager {
 
         return availableTrades;
 	}
+
+	@Override
+    protected boolean isInvalidProfessionTrade(MerchantRecipe trade) {
+		if (trade.getItemToBuy().itemID == Item.netherStar.itemID)
+        {
+            if (trade.getSecondItemToBuy() == null && trade.getItemToSell().itemID == Item.emerald.itemID || trade.getSecondItemToBuy() != null && trade.getSecondItemToBuy().itemID == Item.emerald.itemID && trade.getItemToSell().itemID == FCBetterThanWolves.fcAnvil.blockID)
+            {
+                return true;
+            }
+        }
+        else if (trade.getItemToBuy().itemID == Item.bone.itemID && trade.getItemToBuy().stackSize > 16)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+	@Override
+	protected MerchantRecipe getProfessionDefaultTrade() {
+		return new MerchantRecipe(new ItemStack(FCBetterThanWolves.fcItemHemp.itemID, this.rand.nextInt(5) + 18, 0), new ItemStack(Item.emerald.itemID, 1, 0), 1);
+	}
 	
 	//CLIENT ONLY
 	public String getTexture() {

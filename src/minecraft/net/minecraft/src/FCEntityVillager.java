@@ -162,6 +162,8 @@ public abstract class FCEntityVillager extends EntityVillager
 
     protected void entityInit()
     {
+        super.entityInit();
+        
     	//Dirty hacks to maintain compatibility with older saves
     	if (this.getClass().equals(FCEntityVillager.class)) {
     		FCEntityVillager villager = createVillagerFromProfession(this.worldObj, this.getProfession());
@@ -172,7 +174,6 @@ public abstract class FCEntityVillager extends EntityVillager
     		return;
     	}
     	
-        super.entityInit();
         this.dataWatcher.addObject(22, 0);
         this.dataWatcher.addObject(23, 0);
         this.dataWatcher.addObject(25, 0);
@@ -453,7 +454,7 @@ public abstract class FCEntityVillager extends EntityVillager
 
                 if (recipeList.isEmpty())
                 {
-                    this.AddDefaultTradeToList(recipeList);
+                    recipeList.add(this.getProfessionDefaultTrade());
                 }
                 else
                 {
@@ -514,6 +515,8 @@ public abstract class FCEntityVillager extends EntityVillager
      */
     protected abstract MerchantRecipe getProfessionLevelUpTrade(int level);
     
+    protected abstract MerchantRecipe getProfessionDefaultTrade();
+    
     /**
      * Adds the mandatory trades for the profession at the current level
      * Use AttemptToAddTradeToBuyingList() for each recipe and decrement remaining available recipes on success
@@ -523,44 +526,11 @@ public abstract class FCEntityVillager extends EntityVillager
     protected int checkForProfessionMandatoryTrades(int availableTrades, int level) {
     	return availableTrades;
     }
+    
+    protected boolean isInvalidProfessionTrade(MerchantRecipe trade) {
+    	return false;
+    }
     //ADDON EXTENDED
-
-    private int CheckForButcherMandatoryTrades(int var1)
-    {
-        int var2 = this.GetCurrentTradeLevel();
-
-        if (var2 >= 4 && this.AttemptToAddTradeToBuyingList(new MerchantRecipe(new ItemStack(Item.skull, 1, 0), new ItemStack(Item.emerald, this.rand.nextInt(3) + 6), new ItemStack(Item.skull, 1, 1), 3)))
-        {
-            --var1;
-        }
-
-        return var1;
-    }
-
-    private void AddDefaultTradeToList(MerchantRecipeList var1)
-    {
-        switch (this.getProfession())
-        {
-            case 0:
-                var1.add(new MerchantRecipe(new ItemStack(FCBetterThanWolves.fcBlockDirtLoose.blockID, this.rand.nextInt(17) + 48, 0), new ItemStack(Item.emerald.itemID, 1, 0), 1));
-                break;
-
-            case 1:
-                var1.add(new MerchantRecipe(new ItemStack(Item.paper.itemID, this.rand.nextInt(12) + 27, 0), new ItemStack(Item.emerald.itemID, 1, 0), 1));
-                break;
-
-            case 2:
-                var1.add(new MerchantRecipe(new ItemStack(FCBetterThanWolves.fcItemHemp.itemID, this.rand.nextInt(5) + 18, 0), new ItemStack(Item.emerald.itemID, 1, 0), 1));
-                break;
-
-            case 3:
-                var1.add(new MerchantRecipe(new ItemStack(Item.coal.itemID, this.rand.nextInt(9) + 16, 0), new ItemStack(Item.emerald.itemID, 1, 0), 1));
-                break;
-
-            case 4:
-                var1.add(new MerchantRecipe(new ItemStack(Item.emerald.itemID, 1, 0), new ItemStack(Item.beefRaw.itemID, this.rand.nextInt(3) + 7, 0), 1));
-        }
-    }
 
     private float ComputeAdjustedChanceOfTrade(float var1, int var2)
     {
@@ -575,122 +545,98 @@ public abstract class FCEntityVillager extends EntityVillager
         return var1 * var3;
     }
 
-    protected void CheckForWishToBuyMultipleItemsTrade(MerchantRecipeList var1, int var2, float var3, int var4, int var5, int var6)
-    {
-        this.CheckForWishToBuyMultipleItemsTrade(var1, var2, 0, var3, var4, var5, var6);
+    protected void CheckForWishToBuyMultipleItemsTrade(MerchantRecipeList recipeList, int tradeID, float chance, int minCount, int maxCount, int tradeLevel) {
+        this.CheckForWishToBuyMultipleItemsTrade(recipeList, tradeID, 0, chance, minCount, maxCount, tradeLevel);
     }
 
-    protected void CheckForWishToBuyMultipleItemsTrade(MerchantRecipeList var1, int var2, int var3, float var4, int var5, int var6, int var7)
-    {
-        if (this.GetCurrentTradeLevel() >= var7 && this.rand.nextFloat() < this.ComputeAdjustedChanceOfTrade(var4, var7))
-        {
-            int var8 = MathHelper.getRandomIntegerInRange(this.rand, var5, var6);
-            this.AddWishToBuyTradeToList(var1, var2, var8, var3, 1, var7);
+    protected void CheckForWishToBuyMultipleItemsTrade(MerchantRecipeList recipeList, int tradeID, int tradeDamage, float chance, int minCount, int maxCount, int tradeLevel) {
+        if (this.GetCurrentTradeLevel() >= tradeLevel && this.rand.nextFloat() < this.ComputeAdjustedChanceOfTrade(chance, tradeLevel)) {
+            int tradeCount = MathHelper.getRandomIntegerInRange(this.rand, minCount, maxCount);
+            this.AddWishToBuyTradeToList(recipeList, tradeID, tradeCount, tradeDamage, 1, tradeLevel);
         }
     }
 
-    protected void CheckForWishToBuySingleItemTrade(MerchantRecipeList var1, int var2, float var3, int var4, int var5, int var6)
-    {
-        this.CheckForWishToBuySingleItemTrade(var1, var2, 0, var3, var4, var5, var6);
+    protected void CheckForWishToBuySingleItemTrade(MerchantRecipeList recipeList, int tradeID, float chance, int minCost, int maxCost, int tradeLevel) {
+        this.CheckForWishToBuySingleItemTrade(recipeList, tradeID, 0, chance, minCost, maxCost, tradeLevel);
     }
 
-    private void CheckForWishToBuySingleItemTrade(MerchantRecipeList var1, int var2, int var3, float var4, int var5, int var6, int var7)
-    {
-        if (this.GetCurrentTradeLevel() >= var7 && this.rand.nextFloat() < this.ComputeAdjustedChanceOfTrade(var4, var7))
-        {
-            int var8 = MathHelper.getRandomIntegerInRange(this.rand, var5, var6);
-            this.AddWishToBuyTradeToList(var1, var2, 1, var3, var8, var7);
+    protected void CheckForWishToBuySingleItemTrade(MerchantRecipeList recipeList, int tradeID, int tradeDamage, float chance, int minCost, int maxCost, int tradeLevel) {
+        if (this.GetCurrentTradeLevel() >= tradeLevel && this.rand.nextFloat() < this.ComputeAdjustedChanceOfTrade(chance, tradeLevel)) {
+            int cost = MathHelper.getRandomIntegerInRange(this.rand, minCost, maxCost);
+            this.AddWishToBuyTradeToList(recipeList, tradeID, 1, tradeDamage, cost, tradeLevel);
         }
     }
 
-    private void AddWishToBuyTradeToList(MerchantRecipeList var1, int var2, int var3, int var4, int var5, int var6)
-    {
-        ItemStack var7 = new ItemStack(Item.emerald.itemID, var5, 0);
-        ItemStack var8 = new ItemStack(var2, var3, var4);
-        var1.add(new MerchantRecipe(var8, var7, var6));
+    private void AddWishToBuyTradeToList(MerchantRecipeList recipeList, int tradeID, int tradeCount, int tradeDamage, int cost, int tradeLevel) {
+        ItemStack emeraldStack = new ItemStack(Item.emerald.itemID, cost, 0);
+        ItemStack tradeStack = new ItemStack(tradeID, tradeCount, tradeDamage);
+        recipeList.add(new MerchantRecipe(tradeStack, emeraldStack, tradeLevel));
     }
 
-    protected void CheckForWishToSellSingleItemTrade(MerchantRecipeList var1, int var2, float var3, int var4, int var5, int var6)
-    {
-        this.CheckForWishToSellSingleItemTrade(var1, var2, 0, var3, var4, var5, var6);
+    protected void CheckForWishToSellSingleItemTrade(MerchantRecipeList recipeList, int tradeID, float chance, int minCost, int maxCost, int tradeLevel) {
+        this.CheckForWishToSellSingleItemTrade(recipeList, tradeID, 0, chance, minCost, maxCost, tradeLevel);
     }
 
-    private void CheckForWishToSellSingleItemTrade(MerchantRecipeList var1, int var2, int var3, float var4, int var5, int var6, int var7)
-    {
-        if (this.GetCurrentTradeLevel() >= var7 && this.rand.nextFloat() < this.ComputeAdjustedChanceOfTrade(var4, var7))
-        {
-            int var8 = MathHelper.getRandomIntegerInRange(this.rand, var5, var6);
-            this.AddWishToSellTradeToList(var1, var2, 1, var3, var8, var7);
+    protected void CheckForWishToSellSingleItemTrade(MerchantRecipeList recipeList, int tradeID, int tradeDamage, float var4, int minCost, int maxCost, int tradeLevel) {
+        if (this.GetCurrentTradeLevel() >= tradeLevel && this.rand.nextFloat() < this.ComputeAdjustedChanceOfTrade(var4, tradeLevel)) {
+            int cost = MathHelper.getRandomIntegerInRange(this.rand, minCost, maxCost);
+            this.AddWishToSellTradeToList(recipeList, tradeID, 1, tradeDamage, cost, tradeLevel);
         }
     }
 
-    protected void CheckForWishToSellMultipleItemsTrade(MerchantRecipeList var1, int var2, float var3, int var4, int var5, int var6)
-    {
-        this.CheckForWishToSellMultipleItemsTrade(var1, var2, 0, var3, var4, var5, var6);
+    protected void CheckForWishToSellMultipleItemsTrade(MerchantRecipeList recipeList, int tradeID, float chance, int minCount, int maxCount, int tradeLevel) {
+        this.CheckForWishToSellMultipleItemsTrade(recipeList, tradeID, 0, chance, minCount, maxCount, tradeLevel);
     }
 
-    private void CheckForWishToSellMultipleItemsTrade(MerchantRecipeList var1, int var2, int var3, float var4, int var5, int var6, int var7)
-    {
-        if (this.GetCurrentTradeLevel() >= var7 && this.rand.nextFloat() < this.ComputeAdjustedChanceOfTrade(var4, var7))
-        {
-            int var8 = MathHelper.getRandomIntegerInRange(this.rand, var5, var6);
-            this.AddWishToSellTradeToList(var1, var2, var8, var3, 1, var7);
+    protected void CheckForWishToSellMultipleItemsTrade(MerchantRecipeList recipeList, int tradeID, int tradeDamage, float chance, int minCount, int maxCount, int tradeLevel) {
+        if (this.GetCurrentTradeLevel() >= tradeLevel && this.rand.nextFloat() < this.ComputeAdjustedChanceOfTrade(chance, tradeLevel)) {
+            int tradeCount = MathHelper.getRandomIntegerInRange(this.rand, minCount, maxCount);
+            this.AddWishToSellTradeToList(recipeList, tradeID, tradeCount, tradeDamage, 1, tradeLevel);
         }
     }
 
-    private void AddWishToSellTradeToList(MerchantRecipeList var1, int var2, int var3, int var4, int var5, int var6)
-    {
-        ItemStack var7 = new ItemStack(Item.emerald.itemID, var5, 0);
-        ItemStack var8 = new ItemStack(var2, var3, var4);
-        var1.add(new MerchantRecipe(var7, var8, var6));
+    private void AddWishToSellTradeToList(MerchantRecipeList recipeList, int tradeID, int tradeCount, int tradeDamage, int cost, int tradeLevel) {
+        ItemStack emeraldStack = new ItemStack(Item.emerald.itemID, cost, 0);
+        ItemStack tradeStack = new ItemStack(tradeID, tradeCount, tradeDamage);
+        recipeList.add(new MerchantRecipe(emeraldStack, tradeStack, tradeLevel));
     }
 
-    protected void CheckForArcaneScrollTrade(MerchantRecipeList var1, int var2, float var3, int var4, int var5, int var6)
-    {
-        if (this.GetCurrentTradeLevel() >= var6 && this.rand.nextFloat() < this.ComputeAdjustedChanceOfTrade(var3, var6))
-        {
-            int var7 = MathHelper.getRandomIntegerInRange(this.rand, var4, var5);
-            ItemStack var8 = new ItemStack(FCBetterThanWolves.fcItemArcaneScroll, 1, var2);
-            var1.add(new MerchantRecipe(new ItemStack(Item.paper), new ItemStack(Item.emerald, var7), var8, var6));
+    protected void CheckForArcaneScrollTrade(MerchantRecipeList recipeList, int enchantID, float chance, int minCost, int maxCost, int tradeLevel) {
+        if (this.GetCurrentTradeLevel() >= tradeLevel && this.rand.nextFloat() < this.ComputeAdjustedChanceOfTrade(chance, tradeLevel)) {
+            int cost = MathHelper.getRandomIntegerInRange(this.rand, minCost, maxCost);
+            ItemStack var8 = new ItemStack(FCBetterThanWolves.fcItemArcaneScroll, 1, enchantID);
+            recipeList.add(new MerchantRecipe(new ItemStack(Item.paper), new ItemStack(Item.emerald, cost), var8, tradeLevel));
         }
     }
 
-    protected void CheckForItemEnchantmentForCostTrade(MerchantRecipeList var1, Item var2, float var3, int var4, int var5, int var6)
-    {
-        if (this.GetCurrentTradeLevel() >= var6 && this.rand.nextFloat() < this.ComputeAdjustedChanceOfTrade(var3, var6))
-        {
-            int var7 = MathHelper.getRandomIntegerInRange(this.rand, var4, var5);
-            var1.add(new MerchantRecipe(new ItemStack(var2, 1, 0), new ItemStack(Item.emerald, var7, 0), EnchantmentHelper.addRandomEnchantment(this.rand, new ItemStack(var2, 1, 0), 5 + this.rand.nextInt(15)), var6));
+    protected void CheckForItemEnchantmentForCostTrade(MerchantRecipeList recipeList, Item itemForEnchant, float chance, int minCost, int maxCost, int tradeLevel) {
+        if (this.GetCurrentTradeLevel() >= tradeLevel && this.rand.nextFloat() < this.ComputeAdjustedChanceOfTrade(chance, tradeLevel)) {
+            int cost = MathHelper.getRandomIntegerInRange(this.rand, minCost, maxCost);
+            recipeList.add(new MerchantRecipe(new ItemStack(itemForEnchant, 1, 0), new ItemStack(Item.emerald, cost, 0), EnchantmentHelper.addRandomEnchantment(this.rand, new ItemStack(itemForEnchant, 1, 0), 5 + this.rand.nextInt(15)), tradeLevel));
         }
     }
 
-    private void CheckForItemConversionForCostTrade(MerchantRecipeList var1, Item var2, Item var3, float var4, int var5, int var6, int var7)
-    {
-        if (this.GetCurrentTradeLevel() >= var7 && this.rand.nextFloat() < this.ComputeAdjustedChanceOfTrade(var4, var7))
-        {
-            int var8 = MathHelper.getRandomIntegerInRange(this.rand, var5, var6);
-            ItemStack var9 = new ItemStack(var2);
-            ItemStack var10 = new ItemStack(var3);
-            var1.add(new MerchantRecipe(var9, new ItemStack(Item.emerald, var8), var10, var7));
+    protected void CheckForItemConversionForCostTrade(MerchantRecipeList recipeList, Item itemForConversion, Item convertedItem, float var4, int minCost, int maxCost, int tradeLevel) {
+        if (this.GetCurrentTradeLevel() >= tradeLevel && this.rand.nextFloat() < this.ComputeAdjustedChanceOfTrade(var4, tradeLevel)) {
+            int cost = MathHelper.getRandomIntegerInRange(this.rand, minCost, maxCost);
+            ItemStack stackForConversion = new ItemStack(itemForConversion);
+            ItemStack convertedStack = new ItemStack(convertedItem);
+            recipeList.add(new MerchantRecipe(stackForConversion, new ItemStack(Item.emerald, cost), convertedStack, tradeLevel));
         }
     }
 
-    private void CheckForSkullConversionForCostTrade(MerchantRecipeList var1, int var2, int var3, float var4, int var5, int var6, int var7)
-    {
-        if (this.GetCurrentTradeLevel() >= var7 && this.rand.nextFloat() < this.ComputeAdjustedChanceOfTrade(var4, var7))
-        {
-            int var8 = MathHelper.getRandomIntegerInRange(this.rand, var5, var6);
-            ItemStack var9 = new ItemStack(Item.skull, 1, var2);
-            ItemStack var10 = new ItemStack(Item.skull, 1, var3);
-            var1.add(new MerchantRecipe(var9, new ItemStack(Item.emerald, var8), var10, var7));
+    protected void CheckForSkullConversionForCostTrade(MerchantRecipeList recipeList, int skullMetaForConversion, int convertedSkullMeta, float chance, int minCost, int maxCost, int tradeLevel) {
+        if (this.GetCurrentTradeLevel() >= tradeLevel && this.rand.nextFloat() < this.ComputeAdjustedChanceOfTrade(chance, tradeLevel)) {
+            int cost = MathHelper.getRandomIntegerInRange(this.rand, minCost, maxCost);
+            ItemStack var9 = new ItemStack(Item.skull, 1, skullMetaForConversion);
+            ItemStack var10 = new ItemStack(Item.skull, 1, convertedSkullMeta);
+            recipeList.add(new MerchantRecipe(var9, new ItemStack(Item.emerald, cost), var10, tradeLevel));
         }
     }
 
-    protected void CheckForComplexTrade(MerchantRecipeList var1, ItemStack var2, ItemStack var3, ItemStack var4, float var5, int var6)
-    {
-        if (this.GetCurrentTradeLevel() >= var6 && this.rand.nextFloat() < this.ComputeAdjustedChanceOfTrade(var5, var6))
-        {
-            var1.add(new MerchantRecipe(var2, var3, var4, var6));
+    protected void CheckForComplexTrade(MerchantRecipeList recipeList, ItemStack buyStack1, ItemStack buyStack2, ItemStack sellStack, float chance, int tradeLevel) {
+        if (this.GetCurrentTradeLevel() >= tradeLevel && this.rand.nextFloat() < this.ComputeAdjustedChanceOfTrade(chance, tradeLevel)) {
+            recipeList.add(new MerchantRecipe(buyStack1, buyStack2, sellStack, tradeLevel));
         }
     }
 
@@ -736,110 +682,17 @@ public abstract class FCEntityVillager extends EntityVillager
         }
     }
 
-    private void CheckForInvalidTrades()
-    {
-        int var1 = this.getProfession();
-        int var2 = this.GetCurrentTradeLevel();
-        Iterator var3;
-        MerchantRecipe var4;
+    private void CheckForInvalidTrades() {
+    	MerchantRecipe trade;
+    	Iterator iterator = this.buyingList.iterator();
 
-        if (var1 == 0)
-        {
-            if (var2 >= 4)
-            {
-                var3 = this.buyingList.iterator();
+    	while (iterator.hasNext()) {
+    		trade = (MerchantRecipe)iterator.next();
 
-                while (var3.hasNext())
-                {
-                    var4 = (MerchantRecipe)var3.next();
-
-                    if (this.IsInvalidPeasantTrade(var4))
-                    {
-                        var3.remove();
-                    }
-                }
-            }
-        }
-        else if (var1 == 2)
-        {
-            if (var2 >= 3)
-            {
-                var3 = this.buyingList.iterator();
-
-                while (var3.hasNext())
-                {
-                    var4 = (MerchantRecipe)var3.next();
-
-                    if (this.IsInvalidPriestTrade(var4))
-                    {
-                        var3.remove();
-                    }
-                }
-            }
-        }
-        else if (var1 == 3)
-        {
-            if (var2 >= 4)
-            {
-                var3 = this.buyingList.iterator();
-
-                while (var3.hasNext())
-                {
-                    var4 = (MerchantRecipe)var3.next();
-
-                    if (this.IsInvalidBlacksmithTrade(var4))
-                    {
-                        var3.remove();
-                    }
-                }
-            }
-        }
-        else if (var1 == 4 && var2 >= 5)
-        {
-            var3 = this.buyingList.iterator();
-
-            while (var3.hasNext())
-            {
-                var4 = (MerchantRecipe)var3.next();
-
-                if (this.IsInvalidButcherTrade(var4))
-                {
-                    var3.remove();
-                }
-            }
-        }
-    }
-
-    private boolean IsInvalidPeasantTrade(MerchantRecipe var1)
-    {
-        return var1.getItemToBuy().itemID == FCBetterThanWolves.fcPlanter.blockID;
-    }
-
-    private boolean IsInvalidPriestTrade(MerchantRecipe var1)
-    {
-        if (var1.getItemToBuy().itemID == Item.netherStar.itemID)
-        {
-            if (var1.getSecondItemToBuy() == null && var1.getItemToSell().itemID == Item.emerald.itemID || var1.getSecondItemToBuy() != null && var1.getSecondItemToBuy().itemID == Item.emerald.itemID && var1.getItemToSell().itemID == FCBetterThanWolves.fcAnvil.blockID)
-            {
-                return true;
-            }
-        }
-        else if (var1.getItemToBuy().itemID == Item.bone.itemID && var1.getItemToBuy().stackSize > 16)
-        {
-            return true;
-        }
-
-        return false;
-    }
-
-    private boolean IsInvalidBlacksmithTrade(MerchantRecipe var1)
-    {
-        return var1.getItemToBuy().itemID == FCBetterThanWolves.fcAnvil.blockID && var1.getItemToSell().itemID == Item.emerald.itemID;
-    }
-
-    private boolean IsInvalidButcherTrade(MerchantRecipe var1)
-    {
-        return var1.getItemToBuy().itemID == FCBetterThanWolves.fcAestheticNonOpaque.blockID && var1.getItemToBuy().getItemDamage() == 12;
+    		if (this.isInvalidProfessionTrade(trade)) {
+    			iterator.remove();
+    		}
+    	}
     }
 
     private void UpdateStatusParticles()
@@ -921,7 +774,7 @@ public abstract class FCEntityVillager extends EntityVillager
 
     public void SetInLove(int var1)
     {
-        this.dataWatcher.updateObject(22, Integer.valueOf(var1));
+        this.dataWatcher.updateObject(22, var1);
     }
 
     public int GetDirtyPeasant()
@@ -931,7 +784,7 @@ public abstract class FCEntityVillager extends EntityVillager
 
     public void SetDirtyPeasant(int var1)
     {
-        this.dataWatcher.updateObject(26, Integer.valueOf(var1));
+        this.dataWatcher.updateObject(26, var1);
     }
 
     public int GetCurrentTradeLevel()
@@ -941,7 +794,7 @@ public abstract class FCEntityVillager extends EntityVillager
 
     public void SetTradeLevel(int var1)
     {
-        this.dataWatcher.updateObject(23, Integer.valueOf(var1));
+        this.dataWatcher.updateObject(23, var1);
     }
 
     public int GetCurrentTradeXP()
@@ -951,7 +804,7 @@ public abstract class FCEntityVillager extends EntityVillager
 
     public void SetTradeExperience(int var1)
     {
-        this.dataWatcher.updateObject(25, Integer.valueOf(var1));
+        this.dataWatcher.updateObject(25, var1);
     }
 
     public int GetCurrentTradeMaxXP()

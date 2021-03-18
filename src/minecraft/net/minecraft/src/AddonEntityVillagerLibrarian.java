@@ -61,6 +61,11 @@ public class AddonEntityVillagerLibrarian extends FCEntityVillager {
 	
 	    return availableTrades;
 	}
+
+	@Override
+	protected MerchantRecipe getProfessionDefaultTrade() {
+		return new MerchantRecipe(new ItemStack(Item.paper.itemID, this.rand.nextInt(12) + 27, 0), new ItemStack(Item.emerald.itemID, 1, 0), 1);
+	}
 	
 	//CLIENT ONLY
 	public String getTexture() {
