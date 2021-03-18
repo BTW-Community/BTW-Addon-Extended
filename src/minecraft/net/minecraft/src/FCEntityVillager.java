@@ -25,6 +25,8 @@ public abstract class FCEntityVillager extends EntityVillager
     public static final int professionIDButcher = 4;
     
     public static Map<Integer, Class> professionMap = new HashMap<Integer, Class>();
+    
+    private NBTTagCompound tagForFormatConversion;
 
     static {
     	professionMap.put(professionIDFarmer, AddonEntityVillagerFarmer.class);
@@ -160,11 +162,21 @@ public abstract class FCEntityVillager extends EntityVillager
 
     protected void entityInit()
     {
+    	//Dirty hacks to maintain compatibility with older saves
+    	if (this.getClass().equals(FCEntityVillager.class)) {
+    		FCEntityVillager villager = createVillagerFromProfession(this.worldObj, this.getProfession());
+    		villager.readEntityFromNBT(tagForFormatConversion);
+    		this.worldObj.spawnEntityInWorld(villager);
+    		
+    		this.setDead();
+    		return;
+    	}
+    	
         super.entityInit();
-        this.dataWatcher.addObject(22, new Integer(0));
-        this.dataWatcher.addObject(23, new Integer(0));
-        this.dataWatcher.addObject(25, new Integer(0));
-        this.dataWatcher.addObject(26, new Integer(0));
+        this.dataWatcher.addObject(22, 0);
+        this.dataWatcher.addObject(23, 0);
+        this.dataWatcher.addObject(25, 0);
+        this.dataWatcher.addObject(26, 0);
     }
 
     /**
@@ -207,6 +219,8 @@ public abstract class FCEntityVillager extends EntityVillager
         }
 
         this.CheckForInvalidTrades();
+        
+        this.tagForFormatConversion = var1;
     }
 
     public void setRevengeTarget(EntityLiving var1)
@@ -983,49 +997,6 @@ public abstract class FCEntityVillager extends EntityVillager
             default:
                 return var2;
         }
-    }
-
-    /**
-     * Returns the texture's file path as a String.
-     */
-    public String getTexture()
-    {
-        switch (this.getProfession())
-        {
-            case 0:
-                if (this.GetDirtyPeasant() > 0)
-                {
-                    return "/btwmodtex/fcDirtyPeasant.png";
-                }
-
-                break;
-
-            case 1:
-                if (this.GetCurrentTradeLevel() >= 5)
-                {
-                    return "/btwmodtex/fcLibrarianSpecs.png";
-                }
-
-                break;
-
-            case 2:
-                if (this.GetCurrentTradeLevel() >= 5)
-                {
-                    return "/btwmodtex/fcPriestLvl.png";
-                }
-
-            case 3:
-            default:
-                break;
-
-            case 4:
-                if (this.GetCurrentTradeLevel() > 3)
-                {
-                    return "/btwmodtex/fcButcherLvl.png";
-                }
-        }
-
-        return super.getTexture();
     }
 
     public void handleHealthUpdate(byte var1)

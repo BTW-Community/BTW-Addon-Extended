@@ -64,4 +64,12 @@ public class AddonEntityVillagerFarmer extends FCEntityVillager {
 				return null;
 		}
 	}
+	
+	//CLIENT ONLY
+	@Override
+	public String getTexture() {
+		if (this.GetDirtyPeasant() > 0)
+			return "/btwmodtex/fcDirtyPeasant.png";
+		return "/mob/villager/farmer.png";
+	}
 }

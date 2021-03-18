@@ -61,4 +61,11 @@ public class AddonEntityVillagerLibrarian extends FCEntityVillager {
 	
 	    return availableTrades;
 	}
+	
+	//CLIENT ONLY
+	public String getTexture() {
+		if (this.GetCurrentTradeLevel() >= 5)
+            return "/btwmodtex/fcLibrarianSpecs.png";
+        return "/mob/villager/librarian.png";
+	}
 }

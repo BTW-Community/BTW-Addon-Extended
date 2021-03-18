@@ -73,4 +73,11 @@ public class AddonEntityVillagerButcher extends FCEntityVillager {
 
         return availableTrades;
 	}
+	
+	//CLIENT ONLY
+	public String getTexture() {
+		if (this.GetCurrentTradeLevel() >= 3)
+            return "/btwmodtex/fcButcherLvl.png";
+        return "/mob/villager/butcher.png";
+	}
 }

@@ -66,4 +66,9 @@ public class AddonEntityVillagerBlacksmith extends FCEntityVillager {
                 return null;
         }
 	}
+	
+	//CLIENT ONLY
+	public String getTexture() {
+        return "/mob/villager/smith.png";
+	}
 }

@@ -66,4 +66,11 @@ public class AddonEntityVillagerPriest extends FCEntityVillager {
 
         return availableTrades;
 	}
+	
+	//CLIENT ONLY
+	public String getTexture() {
+		if (this.GetCurrentTradeLevel() >= 5)
+            return "/btwmodtex/fcPriestLvl.png";
+        return "/mob/villager/priest.png";
+	}
 }
