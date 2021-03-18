@@ -398,7 +398,6 @@ src/minecraft/net/minecraft/src/ComponentStrongholdStairs.java
 src/minecraft/net/minecraft/src/ComponentStrongholdStairs2.java
 src/minecraft/net/minecraft/src/ComponentStrongholdStairsStraight.java
 src/minecraft/net/minecraft/src/ComponentStrongholdStraight.java
-src/minecraft/net/minecraft/src/ComponentVillage.java
 src/minecraft/net/minecraft/src/ComponentVillageChurch.java
 src/minecraft/net/minecraft/src/ComponentVillageField.java
 src/minecraft/net/minecraft/src/ComponentVillageField2.java
@@ -1167,7 +1166,6 @@ src/minecraft/net/minecraft/src/FCEntityWitherPersistent.java
 src/minecraft/net/minecraft/src/FCEntityWitherSkull.java
 src/minecraft/net/minecraft/src/FCEntityWolf.java
 src/minecraft/net/minecraft/src/FCEntityWolfDire.java
-src/minecraft/net/minecraft/src/FCEntityZombie.java
 src/minecraft/net/minecraft/src/FCEntityZombieSecondaryTargetFilter.java
 src/minecraft/net/minecraft/src/FCEnumCanvasArt.java
 src/minecraft/net/minecraft/src/FCEnumFlammability.java
@@ -2553,7 +2551,6 @@ src/minecraft_server/net/minecraft/src/ComponentStrongholdStairs.java
 src/minecraft_server/net/minecraft/src/ComponentStrongholdStairs2.java
 src/minecraft_server/net/minecraft/src/ComponentStrongholdStairsStraight.java
 src/minecraft_server/net/minecraft/src/ComponentStrongholdStraight.java
-src/minecraft_server/net/minecraft/src/ComponentVillage.java
 src/minecraft_server/net/minecraft/src/ComponentVillageChurch.java
 src/minecraft_server/net/minecraft/src/ComponentVillageField.java
 src/minecraft_server/net/minecraft/src/ComponentVillageField2.java
@@ -3222,7 +3219,6 @@ src/minecraft_server/net/minecraft/src/FCEntityWitherPersistent.java
 src/minecraft_server/net/minecraft/src/FCEntityWitherSkull.java
 src/minecraft_server/net/minecraft/src/FCEntityWolf.java
 src/minecraft_server/net/minecraft/src/FCEntityWolfDire.java
-src/minecraft_server/net/minecraft/src/FCEntityZombie.java
 src/minecraft_server/net/minecraft/src/FCEntityZombieSecondaryTargetFilter.java
 src/minecraft_server/net/minecraft/src/FCEnumCanvasArt.java
 src/minecraft_server/net/minecraft/src/FCEnumFlammability.java
