@@ -2204,7 +2204,6 @@ src/minecraft/net/minecraft/src/WeightedRandom.java
 src/minecraft/net/minecraft/src/WeightedRandomChestContent.java
 src/minecraft/net/minecraft/src/WeightedRandomItem.java
 src/minecraft/net/minecraft/src/WeightedRandomMinecart.java
-src/minecraft/net/minecraft/src/World.java
 src/minecraft/net/minecraft/src/WorldChunkManager.java
 src/minecraft/net/minecraft/src/WorldChunkManagerHell.java
 src/minecraft/net/minecraft/src/WorldClient.java
@@ -3947,7 +3946,6 @@ src/minecraft_server/net/minecraft/src/WeightedRandom.java
 src/minecraft_server/net/minecraft/src/WeightedRandomChestContent.java
 src/minecraft_server/net/minecraft/src/WeightedRandomItem.java
 src/minecraft_server/net/minecraft/src/WeightedRandomMinecart.java
-src/minecraft_server/net/minecraft/src/World.java
 src/minecraft_server/net/minecraft/src/WorldChunkManager.java
 src/minecraft_server/net/minecraft/src/WorldChunkManagerHell.java
 src/minecraft_server/net/minecraft/src/WorldGenBigMushroom.java
