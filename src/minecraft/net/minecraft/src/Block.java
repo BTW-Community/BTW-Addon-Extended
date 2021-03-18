@@ -42,6 +42,9 @@ public class Block
     
     // ADDON EXTENDED //
     public static final boolean[] blockReplaced = new boolean[4096];
+
+    //Pokes the addon
+    AddonVillagerHandler handler = AddonVillagerHandler.getInstance();
     // ADDON EXTENDED //
 
     /**
@@ -3080,7 +3083,5 @@ public class Block
         m_iRotatedFacingsAroundJCounterclockwise = new int[] {0, 1, 5, 4, 2, 3};
         m_iCycledFacings = new int[] {4, 0, 1, 5, 3, 2};
         m_iCycledFacingsReversed = new int[] {1, 2, 5, 4, 0, 3};
-        
-        AddonVillagerHandler.getInstance();
     }
 }

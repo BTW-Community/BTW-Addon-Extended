@@ -515,6 +515,10 @@ public abstract class FCEntityVillager extends EntityVillager
      */
     protected abstract MerchantRecipe getProfessionLevelUpTrade(int level);
     
+    /**
+     * Return the default trade to use if no other trade is found
+     * @return The default trade
+     */
     protected abstract MerchantRecipe getProfessionDefaultTrade();
     
     /**
@@ -527,6 +531,11 @@ public abstract class FCEntityVillager extends EntityVillager
     	return availableTrades;
     }
     
+    /**
+     * Used to clear any invalid trades e.g. that may be left over from previous versions
+     * @param trade The trade to check
+     * @return Whether the trade was invalid and should be removed
+     */
     protected boolean isInvalidProfessionTrade(MerchantRecipe trade) {
     	return false;
     }
