@@ -1,7 +1,8 @@
 package net.minecraft.src;
 
-public class AddonVillagerHandler extends FCAddOn {
-	private static AddonVillagerHandler instance;
+public class AddonDataHandler extends AddonExt {
+
+	private static AddonDataHandler instance;
 	
 	static {
 		EntityList.addMapping(AddonEntityVillagerFarmer.class, "addonVillagerFarmer", 600, 5651507, 12422002);
@@ -13,6 +14,10 @@ public class AddonVillagerHandler extends FCAddOn {
 		EntityList.entityEggs.remove(120);
 	}
 
+	public AddonDataHandler() {
+		super("Extended Addon API", "1.1.0", "API");
+	}
+
 	@Override
 	public void Initialize() {
 		FCAddOnHandler.LogMessage("Initializing Villager Handler...");
@@ -21,6 +26,7 @@ public class AddonVillagerHandler extends FCAddOn {
 		initPriest();
 		initBlacksmith();
 		initButcher();
+		FCAddOnHandler.LogMessage("Village Handler Initialized");
 	}
 	
 	public void initFarmer() {
@@ -43,9 +49,9 @@ public class AddonVillagerHandler extends FCAddOn {
 		
 	}
 	
-	public static AddonVillagerHandler getInstance() {
+	public static AddonDataHandler getInstance() {
 		if (instance == null) {
-			instance = new AddonVillagerHandler();
+			instance = new AddonDataHandler();
 		}
 		
 		return instance;
