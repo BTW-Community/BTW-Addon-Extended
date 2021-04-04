@@ -3,6 +3,7 @@ The villager changes in this version required me to split villager professions i
 However, support cannot be added for going the other way. Worlds which update to this version of the API cannot be downgraded safely. If you do load a world that you have loaded with this version later with a version of the API before 1.1.0, or without the API, your villagers will disappear.
 Back up your worlds just in case!
 [list]
+[*]Removed spaces from filename to assist users on linux.
 [*]Added some hooks for my upcoming automation addon.
 [*]Added hooks to spawn custom item entities per item.
 [*]Added hooks to allow more specific customization of map colors, including per metadata.

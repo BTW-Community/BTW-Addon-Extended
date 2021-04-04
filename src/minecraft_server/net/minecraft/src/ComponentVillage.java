@@ -155,7 +155,7 @@ abstract class ComponentVillage extends StructureComponent
                     }
                     else
                     {
-                        FCEntityVillager var16 = new FCEntityVillager(par1World, var14);
+                        FCEntityVillager var16 = FCEntityVillager.createVillagerFromProfession(par1World, var14);
 
                         if (var8)
                         {

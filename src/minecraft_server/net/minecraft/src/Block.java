@@ -38,10 +38,6 @@ public class Block
 
     /** Amount of light emitted */
     public static final int[] lightValue = new int[4096];
-    
-    // ADDON EXTENDED //
-    public static final boolean[] blockReplaced = new boolean[4096];
-    // ADDON EXTENDED //
 
     /**
      * Flag if block ID should use the brightest neighbor light value as its own
@@ -302,9 +298,15 @@ public class Block
     private int m_iPigItemFoodValue = 0;
     
     //ADDON EXTENDED
+    //Pokes the API
+    AddonDataHandler handler = AddonDataHandler.getInstance();
+    
+    public static final boolean[] blockReplaced = new boolean[4096];
+    
     private int idDroppedOnStonecut = -1;
     private int countDroppedOnStonecut = 0;
     private int metaDroppedOnStonecut = 0;
+    private MapColor[] mapColorsForMetadata;
     //ADDON EXTENDED
 
     protected Block(int par1, Material par2Material)
@@ -2622,10 +2624,16 @@ public class Block
     		}
     		
     		try {
-				newBlock = (Block) newClass.getConstructor(parameterTypes).newInstance(parameterValues);
-			} catch (Exception e) {
-				throw new RuntimeException("A problem has occured attempting to instantiate replacement for " + blocksList[id]);
-			}
+    			newBlock = (Block) newClass.getConstructor(parameterTypes).newInstance(parameterValues);
+    		} catch (InstantiationException e) {
+    			throw new RuntimeException("A problem has occured attempting to instantiate replacement for " + blocksList[id]);
+    		} catch (IllegalArgumentException e) {
+    			throw new RuntimeException("Incompatible types passed to specified constructor for " + blocksList[id]);
+    		} catch (NoSuchMethodException e) {
+    			throw new RuntimeException("No appropriate constructor found for " + blocksList[id] + ". Constructors must be public to be used in replacement.");
+    		} catch (Exception e) {
+    			e.printStackTrace();
+    		}
     		
     		blockReplaced[id] = true;
     		
@@ -2646,59 +2654,56 @@ public class Block
     public void setItemCountDroppedOnStonecutter(int count) {
     	this.countDroppedOnStonecut = count;
     }
-    
+
     public void setItemDamageDroppedOnStonecutter(int meta) {
     	this.metaDroppedOnStonecut = meta;
     }
 
-    public int getItemIDDroppedOnStonecutter(World world, int x, int y, int z)
-    {
+    public int getItemIDDroppedOnStonecutter(World world, int x, int y, int z) {
         return this.idDroppedOnStonecut;
     }
 
-    public int getItemCountDroppedOnStonecutter(World world, int x, int y, int z)
-    {
+    public int getItemCountDroppedOnStonecutter(World world, int x, int y, int z) {
         return this.countDroppedOnStonecut;
     }
 
-    public int getItemDamageDroppedOnStonecutter(World world, int x, int y, int z)
-    {
+    public int getItemDamageDroppedOnStonecutter(World world, int x, int y, int z)  {
         return this.metaDroppedOnStonecut;
     }
 
-    public boolean doesBlockDropAsItemOnStonecutter(World world, int x, int y, int z)
-    {
+    public boolean doesBlockDropAsItemOnStonecutter(World world, int x, int y, int z)  {
         return this.blockMaterial.isSolid();
     }
 
-    public boolean doesBlockBreakStonecutter(World world, int x, int y, int z)
-    {
+    public boolean doesBlockBreakStonecutter(World world, int x, int y, int z) {
         return this.blockMaterial.isSolid() && this.blockMaterial != Material.rock && this.blockMaterial != Material.snow && this.blockMaterial != Material.craftedSnow && this.blockMaterial != FCBetterThanWolves.fcMaterialAsh && this.blockMaterial != FCBetterThanWolves.fcMaterialNetherRock;
     }
 
-    public boolean onBlockStonecut(World world, int x, int y, int z, int stonecutterX, int stonecutterY, int stonecutterZ)
-    {
+    public boolean onBlockStonecut(World world, int x, int y, int z, int stonecutterX, int stonecutterY, int stonecutterZ) {
         return this.onBlockStonecut(world, x, y, z);
     }
 
-    public boolean onBlockStonecut(World world, int x, int y, int z)
-    {
-        int var5 = this.getItemIDDroppedOnStonecutter(world, x, y, z);
+    /**
+     * Override this method to provide finer control over stonecutter behavior.
+     * @param world
+     * @param x
+     * @param y
+     * @param z
+     * @return
+     */
+    public boolean onBlockStonecut(World world, int x, int y, int z){
+        int id = this.getItemIDDroppedOnStonecutter(world, x, y, z);
 
-        if (var5 >= 0)
-        {
-            int var6 = this.getItemCountDroppedOnStonecutter(world, x, y, z);
-            int var7 = this.getItemDamageDroppedOnStonecutter(world, x, y, z);
+        if (id >= 0) {
+            int count = this.getItemCountDroppedOnStonecutter(world, x, y, z);
+            int meta = this.getItemDamageDroppedOnStonecutter(world, x, y, z);
 
-            for (int var8 = 0; var8 < var6; ++var8)
-            {
-                FCUtilsItem.EjectSingleItemWithRandomOffset(world, x, y, z, var5, var7);
+            for (int i = 0; i < count; i++) {
+                FCUtilsItem.EjectSingleItemWithRandomOffset(world, x, y, z, id, meta);
             }
         }
-        else
-        {
-            if (!this.doesBlockDropAsItemOnStonecutter(world, x, y, z))
-            {
+        else {
+            if (!this.doesBlockDropAsItemOnStonecutter(world, x, y, z)) {
                 return false;
             }
 
@@ -2707,6 +2712,36 @@ public class Block
 
         world.setBlockToAir(x, y, z);
         return true;
+    }
+    
+    /**
+     * Gets the color used in map rendering for this block with the specified metadata
+     * @param meta
+     * @return
+     */
+    public MapColor getMapColor(int meta) {
+    	if (mapColorsForMetadata == null) {
+    		return this.blockMaterial.materialMapColor;
+    	}
+    	else {
+    		try {
+    			return mapColorsForMetadata[meta];
+    		}
+    		catch (Exception e) {
+    			FCAddOnHandler.LogMessage("Map color not found for metadata " + meta + " of block " + this);
+        		return this.blockMaterial.materialMapColor;
+    		}
+    	}
+    }
+    
+    /**
+     * Set the array of map colors to use per metadata for this block. Make sure you include ALL possible metadata when using this method!
+     * @param mapColors Array of mapcolor objects which is referenced when rendering maps
+     * @return
+     */
+    public Block setMapColorsForMetadata(MapColor[] mapColors) {
+    	this.mapColorsForMetadata = mapColors;
+    	return this;
     }
     // ADDON EXTENDED //
 

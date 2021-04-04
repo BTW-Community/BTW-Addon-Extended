@@ -39,13 +39,6 @@ public class Block
 
     /** Amount of light emitted */
     public static final int[] lightValue = new int[4096];
-    
-    // ADDON EXTENDED //
-    public static final boolean[] blockReplaced = new boolean[4096];
-
-    //Pokes the addon
-    AddonDataHandler handler = AddonDataHandler.getInstance();
-    // ADDON EXTENDED //
 
     /**
      * Flag if block ID should use the brightest neighbor light value as its own
@@ -310,6 +303,11 @@ public class Block
     public RenderBlocks m_currentBlockRenderer = null;
     
     //ADDON EXTENDED
+    //Pokes the API
+    AddonDataHandler handler = AddonDataHandler.getInstance();
+    
+    public static final boolean[] blockReplaced = new boolean[4096];
+    
     private int idDroppedOnStonecut = -1;
     private int countDroppedOnStonecut = 0;
     private int metaDroppedOnStonecut = 0;
