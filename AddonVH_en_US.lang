@@ -1,0 +1,6 @@
+# Entities
+entity.addonVillagerFarmer.name=Farmer
+entity.addonVillagerLibrarian.name=Librarian
+entity.addonVillagerPriest.name=Priest
+entity.addonVillagerBlacksmith.name=Blacksmith
+entity.addonVillagerButcher.name=Butcher

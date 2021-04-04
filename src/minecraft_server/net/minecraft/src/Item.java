@@ -11,6 +11,7 @@ public class Item
     
     // ADDON EXTENDED //
     public static final boolean[] itemReplaced = new boolean[32000];
+    private Class entityClass = EntityItem.class;
     // ADDON EXTENDED //
 
     /** A 32000 elements Item array. */
@@ -959,6 +960,22 @@ public class Item
     		
     		return newItem;
     	}
+    }
+    
+    public boolean hasCustomItemEntity() {
+    	return this.entityClass != EntityItem.class;
+    }
+    
+    public Class getCustomItemEntity() {
+    	return this.entityClass;
+    }
+    
+    public void setCustomItemEntity(Class entityClass) {
+    	this.entityClass = entityClass;
+    }
+    
+    public EntityItem createItemAsEntityInWorld(World world, double x, double y, double z, ItemStack stack) {
+    	return null;
     }
     // ADDON EXTENDED //
 

@@ -1,8 +1,13 @@
 server/MinecraftServer
 Block
+ComponentVillage
 EntityList
+FCEntityVillager
+FCEntityZombie
 Item
 NetClientHandler
+RenderBlocks
 RenderGlobal
 ServerCommandManager
 ServerConfigurationManager
+World

@@ -1,13 +1,28 @@
+#### HOOKS ####
 ## AddonExt ##
-- Version display / checking on login
-- Intercept a client packet to replace functionality
-- Spawn custom particles
+- Version display / checking on login.
+- Intercept a client packet to replace functionality.
+- Spawn custom particles.
 
 ## Block ##
-- Replacement functionality added with checks for multiple replacement
+- Replacement functionality added with checks for multiple replacement.
+- Map colors per metadata.
 
 ## EntityList ##
-- Entity map replacement in a safe manner (won't crash if you miss a reference to an old class)
+- Entity map replacement in a safe manner (won't crash if you miss a reference to an old class).
+
+## FCEntityVillager ##
+- Changed to an abstract class. Extend the class to add professions.
 
 ## Item ##
-- Replacement functionality added with checks for multiple replacement
+- Replacement functionality added with checks for multiple replacement.
+- Set custom entity to use for the item in world.
+
+## ServerCommandManager ##
+- Register custom addon commands.
+
+#### Templates ####
+## AddonBlockDirectional ##
+- Template for orientable block (e.g. log).
+- Handles all metadata rotation and texture rendering.
+- Can have up to 4 sub-types.
