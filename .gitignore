@@ -1670,7 +1670,6 @@ src/minecraft/net/minecraft/src/ItemHoe.java
 src/minecraft/net/minecraft/src/ItemInWorldManager.java
 src/minecraft/net/minecraft/src/ItemLeaves.java
 src/minecraft/net/minecraft/src/ItemLilyPad.java
-src/minecraft/net/minecraft/src/ItemMap.java
 src/minecraft/net/minecraft/src/ItemMapBase.java
 src/minecraft/net/minecraft/src/ItemMinecart.java
 src/minecraft/net/minecraft/src/ItemMonsterPlacer.java
@@ -3611,7 +3610,6 @@ src/minecraft_server/net/minecraft/src/ItemHoe.java
 src/minecraft_server/net/minecraft/src/ItemInWorldManager.java
 src/minecraft_server/net/minecraft/src/ItemLeaves.java
 src/minecraft_server/net/minecraft/src/ItemLilyPad.java
-src/minecraft_server/net/minecraft/src/ItemMap.java
 src/minecraft_server/net/minecraft/src/ItemMapBase.java
 src/minecraft_server/net/minecraft/src/ItemMinecart.java
 src/minecraft_server/net/minecraft/src/ItemMonsterPlacer.java
