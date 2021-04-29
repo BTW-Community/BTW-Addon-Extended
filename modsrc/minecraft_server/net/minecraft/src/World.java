@@ -59,7 +59,7 @@ public abstract class World implements IBlockAccess
      */
     public int lastLightningBolt = 0;
 
-    /** Option > Difficulty setting (0 - 3) */
+    /** Whether monsters are enabled or not. (1 = on, 0 = off) */
     public int difficultySetting;
 
     /** RNG for World. */
@@ -78,7 +78,10 @@ public abstract class World implements IBlockAccess
      */
     protected WorldInfo worldInfo;
 
-    /** Boolean that is set to true when trying to find a spawn point */
+    /**
+     * if set, this flag forces a request to load a chunk to load the chunk rather than defaulting to the world's
+     * chunkprovider's dummy if possible
+     */
     public boolean findingSpawnPoint;
     public MapStorage mapStorage;
     public final VillageCollection villageCollectionObj;
@@ -147,36 +150,6 @@ public abstract class World implements IBlockAccess
     public WorldChunkManager getWorldChunkManager()
     {
         return this.provider.worldChunkMgr;
-    }
-
-    public World(ISaveHandler par1ISaveHandler, String par2Str, WorldProvider par3WorldProvider, WorldSettings par4WorldSettings, Profiler par5Profiler, ILogAgent par6ILogAgent)
-    {
-        this.ambientTickCountdown = this.rand.nextInt(12000);
-        this.lightUpdateBlockList = new int[32768];
-        this.isRemote = false;
-        this.saveHandler = par1ISaveHandler;
-        this.theProfiler = par5Profiler;
-        this.worldInfo = new WorldInfo(par4WorldSettings, par2Str);
-        this.provider = par3WorldProvider;
-        this.mapStorage = new MapStorage(par1ISaveHandler);
-        this.worldLogAgent = par6ILogAgent;
-        VillageCollection var7 = (VillageCollection)this.mapStorage.loadData(VillageCollection.class, "villages");
-
-        if (var7 == null)
-        {
-            this.villageCollectionObj = new VillageCollection(this);
-            this.mapStorage.setData("villages", this.villageCollectionObj);
-        }
-        else
-        {
-            this.villageCollectionObj = var7;
-            this.villageCollectionObj.func_82566_a(this);
-        }
-
-        par3WorldProvider.registerWorld(this);
-        this.chunkProvider = this.createChunkProvider();
-        this.calculateInitialSkylight();
-        this.calculateInitialWeather();
     }
 
     public World(ISaveHandler par1ISaveHandler, String par2Str, WorldSettings par3WorldSettings, WorldProvider par4WorldProvider, Profiler par5Profiler, ILogAgent par6ILogAgent)
@@ -266,14 +239,6 @@ public abstract class World implements IBlockAccess
     protected void initialize(WorldSettings par1WorldSettings)
     {
         this.worldInfo.setServerInitialized(true);
-    }
-
-    /**
-     * Sets a new spawn location by finding an uncovered block at a random (x,z) location in the chunk.
-     */
-    public void setSpawnLocation()
-    {
-        this.setSpawnLocation(8, 64, 8);
     }
 
     /**
@@ -532,7 +497,7 @@ public abstract class World implements IBlockAccess
      * Sets the blocks metadata and if set will then notify blocks that this block changed, depending on the flag. Args:
      * x, y, z, metadata, flag. See setBlock for flag description
      */
-    public boolean setBlockMetadataWithNotify(int par1, int par2, int par3, int par4, int par5)
+    public boolean setBlockMetadata(int par1, int par2, int par3, int par4, int par5)
     {
         if (par1 >= -30000000 && par3 >= -30000000 && par1 < 30000000 && par3 < 30000000)
         {
@@ -785,7 +750,7 @@ public abstract class World implements IBlockAccess
     }
 
     /**
-     * Does the same as getBlockLightValue_do but without checking if its not a normal block
+     * gets the block's light value - without the _do function's checks.
      */
     public int getFullBlockLightValue(int par1, int par2, int par3)
     {
@@ -928,79 +893,6 @@ public abstract class World implements IBlockAccess
     }
 
     /**
-     * Brightness for SkyBlock.Sky is clear white and (through color computing it is assumed) DEPENDENT ON DAYTIME.
-     * Brightness for SkyBlock.Block is yellowish and independent.
-     */
-    public int getSkyBlockTypeBrightness(EnumSkyBlock par1EnumSkyBlock, int par2, int par3, int par4)
-    {
-        if (this.provider.hasNoSky && par1EnumSkyBlock == EnumSkyBlock.Sky)
-        {
-            return 0;
-        }
-        else
-        {
-            if (par3 < 0)
-            {
-                par3 = 0;
-            }
-
-            if (par3 >= 256)
-            {
-                return par1EnumSkyBlock.defaultLightValue;
-            }
-            else if (par2 >= -30000000 && par4 >= -30000000 && par2 < 30000000 && par4 < 30000000)
-            {
-                int var5 = par2 >> 4;
-                int var6 = par4 >> 4;
-
-                if (!this.chunkExists(var5, var6))
-                {
-                    return par1EnumSkyBlock.defaultLightValue;
-                }
-                else if (Block.useNeighborBrightness[this.getBlockId(par2, par3, par4)])
-                {
-                    int var12 = this.getSavedLightValue(par1EnumSkyBlock, par2, par3 + 1, par4);
-                    int var8 = this.getSavedLightValue(par1EnumSkyBlock, par2 + 1, par3, par4);
-                    int var9 = this.getSavedLightValue(par1EnumSkyBlock, par2 - 1, par3, par4);
-                    int var10 = this.getSavedLightValue(par1EnumSkyBlock, par2, par3, par4 + 1);
-                    int var11 = this.getSavedLightValue(par1EnumSkyBlock, par2, par3, par4 - 1);
-
-                    if (var8 > var12)
-                    {
-                        var12 = var8;
-                    }
-
-                    if (var9 > var12)
-                    {
-                        var12 = var9;
-                    }
-
-                    if (var10 > var12)
-                    {
-                        var12 = var10;
-                    }
-
-                    if (var11 > var12)
-                    {
-                        var12 = var11;
-                    }
-
-                    return var12;
-                }
-                else
-                {
-                    Chunk var7 = this.getChunkFromChunkCoords(var5, var6);
-                    return var7.getSavedLightValue(par1EnumSkyBlock, par2 & 15, par3, par4 & 15);
-                }
-            }
-            else
-            {
-                return par1EnumSkyBlock.defaultLightValue;
-            }
-        }
-    }
-
-    /**
      * Returns saved light value without taking into account the time of day.  Either looks in the sky light map or
      * block light map based on the enumSkyBlock arg.
      */
@@ -1064,34 +956,6 @@ public abstract class World implements IBlockAccess
         {
             ((IWorldAccess)this.worldAccesses.get(var4)).markBlockForRenderUpdate(par1, par2, par3);
         }
-    }
-
-    /**
-     * Any Light rendered on a 1.8 Block goes through here
-     */
-    public int getLightBrightnessForSkyBlocks(int par1, int par2, int par3, int par4)
-    {
-        int var5 = this.getSkyBlockTypeBrightness(EnumSkyBlock.Sky, par1, par2, par3);
-        int var6 = this.getSkyBlockTypeBrightness(EnumSkyBlock.Block, par1, par2, par3);
-
-        if (var6 < par4)
-        {
-            var6 = par4;
-        }
-
-        return var5 << 20 | var6 << 4;
-    }
-
-    public float getBrightness(int par1, int par2, int par3, int par4)
-    {
-        int var5 = this.getBlockLightValue(par1, par2, par3);
-
-        if (var5 < par4)
-        {
-            var5 = par4;
-        }
-
-        return this.provider.lightBrightnessTable[var5];
     }
 
     /**
@@ -1215,7 +1079,7 @@ public abstract class World implements IBlockAccess
     
     //ADDON EXTENDED
     private boolean spawnEntityInWorld(Entity entity, boolean hasItemBeenReplaced) {
-    	if (entity instanceof EntityItem && !hasItemBeenReplaced && !this.isRemote) {
+    	if (entity instanceof EntityItem && !hasItemBeenReplaced) {
     		EntityItem oldEntity = (EntityItem) entity;
     		Item item = oldEntity.getEntityItem().getItem();
     		
@@ -1360,14 +1224,6 @@ public abstract class World implements IBlockAccess
     }
 
     /**
-     * Removes a worldAccess from the worldAccesses object
-     */
-    public void removeWorldAccess(IWorldAccess par1IWorldAccess)
-    {
-        this.worldAccesses.remove(par1IWorldAccess);
-    }
-
-    /**
      * Returns a list of bounding boxes that collide with aabb excluding the passed in entity's collision. Args: entity,
      * aabb
      */
@@ -1487,101 +1343,6 @@ public abstract class World implements IBlockAccess
     }
 
     /**
-     * Returns the sun brightness - checks time of day, rain and thunder
-     */
-    public float getSunBrightness(float par1)
-    {
-        float var2 = this.getCelestialAngle(par1);
-        float var3 = 1.0F - (MathHelper.cos(var2 * (float)Math.PI * 2.0F) * 2.0F + 0.2F);
-
-        if (var3 < 0.0F)
-        {
-            var3 = 0.0F;
-        }
-
-        if (var3 > 1.0F)
-        {
-            var3 = 1.0F;
-        }
-
-        var3 = 1.0F - var3;
-        var3 = (float)((double)var3 * (1.0D - (double)(this.getRainStrength(par1) * 5.0F) / 16.0D));
-        var3 = (float)((double)var3 * (1.0D - (double)(this.getWeightedThunderStrength(par1) * 5.0F) / 16.0D));
-        return var3 * 0.8F + 0.2F;
-    }
-
-    /**
-     * Calculates the color for the skybox
-     */
-    public Vec3 getSkyColor(Entity par1Entity, float par2)
-    {
-        float var3 = this.getCelestialAngle(par2);
-        float var4 = MathHelper.cos(var3 * (float)Math.PI * 2.0F) * 2.0F + 0.5F;
-
-        if (var4 < 0.0F)
-        {
-            var4 = 0.0F;
-        }
-
-        if (var4 > 1.0F)
-        {
-            var4 = 1.0F;
-        }
-
-        int var5 = MathHelper.floor_double(par1Entity.posX);
-        int var6 = MathHelper.floor_double(par1Entity.posZ);
-        BiomeGenBase var7 = this.getBiomeGenForCoords(var5, var6);
-        float var8 = var7.getFloatTemperature();
-        int var9 = var7.getSkyColorByTemp(var8);
-        float var10 = (float)(var9 >> 16 & 255) / 255.0F;
-        float var11 = (float)(var9 >> 8 & 255) / 255.0F;
-        float var12 = (float)(var9 & 255) / 255.0F;
-        var10 *= var4;
-        var11 *= var4;
-        var12 *= var4;
-        float var13 = this.getRainStrength(par2);
-        float var14;
-        float var15;
-
-        if (var13 > 0.0F)
-        {
-            var14 = (var10 * 0.3F + var11 * 0.59F + var12 * 0.11F) * 0.6F;
-            var15 = 1.0F - var13 * 0.75F;
-            var10 = var10 * var15 + var14 * (1.0F - var15);
-            var11 = var11 * var15 + var14 * (1.0F - var15);
-            var12 = var12 * var15 + var14 * (1.0F - var15);
-        }
-
-        var14 = this.getWeightedThunderStrength(par2);
-
-        if (var14 > 0.0F)
-        {
-            var15 = (var10 * 0.3F + var11 * 0.59F + var12 * 0.11F) * 0.2F;
-            float var16 = 1.0F - var14 * 0.75F;
-            var10 = var10 * var16 + var15 * (1.0F - var16);
-            var11 = var11 * var16 + var15 * (1.0F - var16);
-            var12 = var12 * var16 + var15 * (1.0F - var16);
-        }
-
-        if (this.lastLightningBolt > 0)
-        {
-            var15 = (float)this.lastLightningBolt - par2;
-
-            if (var15 > 1.0F)
-            {
-                var15 = 1.0F;
-            }
-
-            var15 *= 0.45F;
-            var10 = var10 * (1.0F - var15) + 0.8F * var15;
-            var11 = var11 * (1.0F - var15) + 0.8F * var15;
-            var12 = var12 * (1.0F - var15) + 1.0F * var15;
-        }
-
-        return this.getWorldVec3Pool().getVecFromPool((double)var10, (double)var11, (double)var12);
-    }
-
-    /**
      * calls calculateCelestialAngle
      */
     public float getCelestialAngle(float par1)
@@ -1591,7 +1352,7 @@ public abstract class World implements IBlockAccess
 
     public int getMoonPhase()
     {
-        return this.provider.getMoonPhase(this.worldInfo.getWorldTime());
+        return this.provider.func_76559_b(this.worldInfo.getWorldTime());
     }
 
     /**
@@ -1601,63 +1362,6 @@ public abstract class World implements IBlockAccess
     {
         float var2 = this.getCelestialAngle(par1);
         return var2 * (float)Math.PI * 2.0F;
-    }
-
-    public Vec3 getCloudColour(float par1)
-    {
-        float var2 = this.getCelestialAngle(par1);
-        float var3 = MathHelper.cos(var2 * (float)Math.PI * 2.0F) * 2.0F + 0.5F;
-
-        if (var3 < 0.0F)
-        {
-            var3 = 0.0F;
-        }
-
-        if (var3 > 1.0F)
-        {
-            var3 = 1.0F;
-        }
-
-        float var4 = (float)(this.cloudColour >> 16 & 255L) / 255.0F;
-        float var5 = (float)(this.cloudColour >> 8 & 255L) / 255.0F;
-        float var6 = (float)(this.cloudColour & 255L) / 255.0F;
-        float var7 = this.getRainStrength(par1);
-        float var8;
-        float var9;
-
-        if (var7 > 0.0F)
-        {
-            var8 = (var4 * 0.3F + var5 * 0.59F + var6 * 0.11F) * 0.6F;
-            var9 = 1.0F - var7 * 0.95F;
-            var4 = var4 * var9 + var8 * (1.0F - var9);
-            var5 = var5 * var9 + var8 * (1.0F - var9);
-            var6 = var6 * var9 + var8 * (1.0F - var9);
-        }
-
-        var4 *= var3 * 0.9F + 0.1F;
-        var5 *= var3 * 0.9F + 0.1F;
-        var6 *= var3 * 0.85F + 0.15F;
-        var8 = this.getWeightedThunderStrength(par1);
-
-        if (var8 > 0.0F)
-        {
-            var9 = (var4 * 0.3F + var5 * 0.59F + var6 * 0.11F) * 0.2F;
-            float var10 = 1.0F - var8 * 0.95F;
-            var4 = var4 * var10 + var9 * (1.0F - var10);
-            var5 = var5 * var10 + var9 * (1.0F - var10);
-            var6 = var6 * var10 + var9 * (1.0F - var10);
-        }
-
-        return this.getWorldVec3Pool().getVecFromPool((double)var4, (double)var5, (double)var6);
-    }
-
-    /**
-     * Returns vector(ish) with R/G/B for fog
-     */
-    public Vec3 getFogColor(float par1)
-    {
-        float var2 = this.getCelestialAngle(par1);
-        return this.provider.getFogColor(var2, par1);
     }
 
     /**
@@ -1691,28 +1395,7 @@ public abstract class World implements IBlockAccess
     }
 
     /**
-     * How bright are stars in the sky
-     */
-    public float getStarBrightness(float par1)
-    {
-        float var2 = this.getCelestialAngle(par1);
-        float var3 = 1.0F - (MathHelper.cos(var2 * (float)Math.PI * 2.0F) * 2.0F + 0.25F);
-
-        if (var3 < 0.0F)
-        {
-            var3 = 0.0F;
-        }
-
-        if (var3 > 1.0F)
-        {
-            var3 = 1.0F;
-        }
-
-        return var3 * var3 * 0.5F;
-    }
-
-    /**
-     * Schedules a tick to a block with a delay (Most commonly the tick rate)
+     * Used to schedule a call to the updateTick method on the specified block.
      */
     public void scheduleBlockUpdate(int par1, int par2, int par3, int par4, int par5) {}
 
@@ -2438,22 +2121,6 @@ public abstract class World implements IBlockAccess
     }
 
     /**
-     * This string is 'All: (number of loaded entities)' Viewable by press ing F3
-     */
-    public String getDebugLoadedEntities()
-    {
-        return "All: " + this.loadedEntityList.size();
-    }
-
-    /**
-     * Returns the name of the current chunk provider, by calling chunkprovider.makeString()
-     */
-    public String getProviderName()
-    {
-        return this.chunkProvider.makeString();
-    }
-
-    /**
      * Returns the TileEntity associated with a given block in X,Y,Z coordinates, or null if no TileEntity exists
      */
     public TileEntity getBlockTileEntity(int par1, int par2, int par3)
@@ -2580,7 +2247,7 @@ public abstract class World implements IBlockAccess
     }
 
     /**
-     * adds tile entity to despawn list (renamed from markEntityForDespawn)
+     * Adds TileEntity to despawn list
      */
     public void markTileEntityForDespawn(TileEntity par1TileEntity)
     {
@@ -2597,7 +2264,7 @@ public abstract class World implements IBlockAccess
     }
 
     /**
-     * Indicate if a material is a normal solid opaque cube.
+     * Returns true if the block at the specified coordinates is an opaque cube. Args: x, y, z
      */
     public boolean isBlockNormalCube(int par1, int par2, int par3)
     {
@@ -2661,7 +2328,7 @@ public abstract class World implements IBlockAccess
     }
 
     /**
-     * Set which types of mobs are allowed to spawn (peaceful vs hostile).
+     * first boolean for hostile mobs and second for peaceful mobs
      */
     public void setAllowedSpawnTypes(boolean par1, boolean par2)
     {
@@ -2695,7 +2362,10 @@ public abstract class World implements IBlockAccess
         }
     }
 
-    public void toggleRain()
+    /**
+     * start precipitation in this world (2 ticks after command posted)
+     */
+    public void commandToggleDownfall()
     {
         this.worldInfo.setRainTime(1);
     }
@@ -3148,14 +2818,6 @@ public abstract class World implements IBlockAccess
     public abstract Entity getEntityByID(int var1);
 
     /**
-     * Accessor for world Loaded Entity List
-     */
-    public List getLoadedEntityList()
-    {
-        return this.loadedEntityList;
-    }
-
-    /**
      * marks the chunk that contains this tilentity as modified and then calls worldAccesses.doNothingWithTileEntity
      */
     public void updateTileEntityChunkAndDoNothing(int par1, int par2, int par3, TileEntity par4TileEntity)
@@ -3180,7 +2842,7 @@ public abstract class World implements IBlockAccess
     }
 
     /**
-     * Adds a list of entities to be unloaded on the next pass of World.updateEntities()
+     * adds entities to the list of unloaded entities
      */
     public void unloadEntities(List par1List)
     {
@@ -3491,11 +3153,6 @@ public abstract class World implements IBlockAccess
     }
 
     /**
-     * If on MP, sends a quitting packet.
-     */
-    public void sendQuittingDisconnectingPacket() {}
-
-    /**
      * Checks whether the session lock file was modified by another process
      */
     public void checkSessionLock() throws MinecraftException
@@ -3503,13 +3160,8 @@ public abstract class World implements IBlockAccess
         this.saveHandler.checkSessionLock();
     }
 
-    public void func_82738_a(long par1)
-    {
-        this.worldInfo.incrementTotalWorldTime(par1);
-    }
-
     /**
-     * Retrieve the world seed from level.dat
+     * gets the random world seed
      */
     public long getSeed()
     {
@@ -3542,34 +3194,6 @@ public abstract class World implements IBlockAccess
         return new ChunkCoordinates(this.worldInfo.getSpawnX(), this.worldInfo.getSpawnY(), this.worldInfo.getSpawnZ());
     }
 
-    public void setSpawnLocation(int par1, int par2, int par3)
-    {
-        this.worldInfo.setSpawnPosition(par1, par2, par3);
-    }
-
-    /**
-     * spwans an entity and loads surrounding chunks
-     */
-    public void joinEntityInSurroundings(Entity par1Entity)
-    {
-        int var2 = MathHelper.floor_double(par1Entity.posX / 16.0D);
-        int var3 = MathHelper.floor_double(par1Entity.posZ / 16.0D);
-        byte var4 = 2;
-
-        for (int var5 = var2 - var4; var5 <= var2 + var4; ++var5)
-        {
-            for (int var6 = var3 - var4; var6 <= var3 + var4; ++var6)
-            {
-                this.getChunkFromChunkCoords(var5, var6);
-            }
-        }
-
-        if (!this.loadedEntityList.contains(par1Entity))
-        {
-            this.loadedEntityList.add(par1Entity);
-        }
-    }
-
     /**
      * Called when checking if a certain block can be mined or not. The 'spawn safe zone' check is located here.
      */
@@ -3584,7 +3208,7 @@ public abstract class World implements IBlockAccess
     public void setEntityState(Entity par1Entity, byte par2) {}
 
     /**
-     * gets the IChunkProvider this world uses.
+     * gets the world's chunk provider
      */
     public IChunkProvider getChunkProvider()
     {
@@ -3612,7 +3236,7 @@ public abstract class World implements IBlockAccess
     }
 
     /**
-     * Gets the World's WorldInfo instance
+     * Returns the world's WorldInfo object
      */
     public WorldInfo getWorldInfo()
     {
@@ -3643,12 +3267,6 @@ public abstract class World implements IBlockAccess
     public float getRainStrength(float par1)
     {
         return this.prevRainingStrength + (this.rainingStrength - this.prevRainingStrength) * par1;
-    }
-
-    public void setRainStrength(float par1)
-    {
-        this.prevRainingStrength = par1;
-        this.rainingStrength = par1;
     }
 
     /**
@@ -3723,7 +3341,8 @@ public abstract class World implements IBlockAccess
     }
 
     /**
-     * See description for playAuxSFX.
+     * Plays a sound or particle effect. Parameters: Effect ID, X, Y, Z, Data. For a list of ids and data, see
+     * http://wiki.vg/Protocol#Effects
      */
     public void playAuxSFX(int par1, int par2, int par3, int par4, int par5)
     {
@@ -3755,7 +3374,7 @@ public abstract class World implements IBlockAccess
     }
 
     /**
-     * Returns current world height.
+     * Returns maximum world height.
      */
     public int getHeight()
     {
@@ -3791,22 +3410,6 @@ public abstract class World implements IBlockAccess
     public ChunkPosition findClosestStructure(String par1Str, int par2, int par3, int par4)
     {
         return this.getChunkProvider().findClosestStructure(this, par1Str, par2, par3, par4);
-    }
-
-    /**
-     * set by !chunk.getAreLevelsEmpty
-     */
-    public boolean extendedLevelsInChunkCache()
-    {
-        return false;
-    }
-
-    /**
-     * Returns horizon height for use in rendering the sky.
-     */
-    public double getHorizon()
-    {
-        return this.worldInfo.getTerrainType() == WorldType.FLAT ? 0.0D : 63.0D;
     }
 
     /**
@@ -3864,8 +3467,6 @@ public abstract class World implements IBlockAccess
 
         return this.theCalendar;
     }
-
-    public void func_92088_a(double par1, double par3, double par5, double par7, double par9, double par11, NBTTagCompound par13NBTTagCompound) {}
 
     public Scoreboard getScoreboard()
     {
@@ -3938,27 +3539,27 @@ public abstract class World implements IBlockAccess
 
     public boolean SetBlockMetadataWithNotify(int var1, int var2, int var3, int var4, int var5)
     {
-        return this.setBlockMetadataWithNotify(var1, var2, var3, var4, var5);
+        return this.setBlockMetadata(var1, var2, var3, var4, var5);
     }
 
     public boolean setBlockMetadata(int var1, int var2, int var3, int var4)
     {
-        return this.setBlockMetadataWithNotify(var1, var2, var3, var4, 0);
+        return this.setBlockMetadata(var1, var2, var3, var4, 0);
     }
 
     public boolean setBlockMetadataWithNotify(int var1, int var2, int var3, int var4)
     {
-        return this.setBlockMetadataWithNotify(var1, var2, var3, var4, 3);
+        return this.setBlockMetadata(var1, var2, var3, var4, 3);
     }
 
     public boolean setBlockMetadataWithClient(int var1, int var2, int var3, int var4)
     {
-        return this.setBlockMetadataWithNotify(var1, var2, var3, var4, 2);
+        return this.setBlockMetadata(var1, var2, var3, var4, 2);
     }
 
     public boolean setBlockMetadataWithNotifyNoClient(int var1, int var2, int var3, int var4)
     {
-        return this.setBlockMetadataWithNotify(var1, var2, var3, var4, 1);
+        return this.setBlockMetadata(var1, var2, var3, var4, 1);
     }
 
     public boolean setBlockAndMetadata(int var1, int var2, int var3, int var4, int var5)

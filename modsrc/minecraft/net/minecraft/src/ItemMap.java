@@ -1,6 +1,5 @@
 package net.minecraft.src;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class ItemMap extends ItemMapBase
@@ -65,9 +64,6 @@ public class ItemMap extends ItemMapBase
 
             MapInfo mapInfo = mapData.func_82568_a((EntityPlayer)entity);
             mapInfo.field_82569_d++;
-            
-            int[] blockIDCountArray = new int[4096];
-            int[][] metaCountPerIDArray = new int[4096][16];
 
             for (int i = entityXOnMap - offsetScale + 1; i < entityXOnMap + offsetScale; ++i) {
                 if ((i & 15) == (mapInfo.field_82569_d & 15)) {
@@ -82,8 +78,8 @@ public class ItemMap extends ItemMapBase
                             boolean isBlockInRangeOfEntity = xDistFromEntity * xDistFromEntity + zDistFromEntity * zDistFromEntity > (offsetScale - 2) * (offsetScale - 2);
                             int blockX = (xCenter / scale + i - baseSizeX / 2) * scale;
                             int blockZ = (zCenter / scale + k - baseSizeZ / 2) * scale;
-                            Arrays.fill(blockIDCountArray, 0);
-                            Arrays.fill(metaCountPerIDArray, 0);
+                            int[] blockIDCountArray = new int[4096];
+                            int[][] metaCountPerIDArray = new int[4096][16];
                             Chunk chunk = world.getChunkFromBlockCoords(blockX, blockZ);
 
                             if (!chunk.isEmpty()) {

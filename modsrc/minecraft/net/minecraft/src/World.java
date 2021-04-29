@@ -1215,7 +1215,7 @@ public abstract class World implements IBlockAccess
     
     //ADDON EXTENDED
     private boolean spawnEntityInWorld(Entity entity, boolean hasItemBeenReplaced) {
-    	if (entity instanceof EntityItem && !hasItemBeenReplaced && !this.isRemote) {
+    	if (entity instanceof EntityItem && !hasItemBeenReplaced) {
     		EntityItem oldEntity = (EntityItem) entity;
     		Item item = oldEntity.getEntityItem().getItem();
     		

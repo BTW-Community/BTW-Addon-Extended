@@ -1,3 +1,10 @@
+Version 1.1.1
+[list]
+[*]Fixed an issue where maps would cause severe performance issues.
+[*]Fixed an issue where spawning an item entity would log errors to the console. These errors never caused real issues and were simply a result of running code on both the client and server when it should've only been run on the server.
+[*]Fixed an issue where curing or attacking villagers would cause the game to crash.
+[/list]
+
 Version 1.1.0
 The villager changes in this version required me to split villager professions into their own entities. Backwards compatibility has been added for villagers in the old format, though it is still a good idea to back up your worlds.
 However, support cannot be added for going the other way. Worlds which update to this version of the API cannot be downgraded safely. If you do load a world that you have loaded with this version later with a version of the API before 1.1.0, or without the API, your villagers will disappear.

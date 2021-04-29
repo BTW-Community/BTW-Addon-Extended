@@ -1,7 +1,5 @@
 package net.minecraft.src;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.List;
 import java.util.Random;
 
 public class Item
@@ -187,10 +185,10 @@ public class Item
     public static Item comparator = (new FCItemStub(148)).setUnlocalizedName("comparator");
     public static Item netherrackBrick = (new Item(149)).setUnlocalizedName("netherbrick");
     public static Item netherQuartz = (new FCItemNetherQuartz(150)).setUnlocalizedName("netherquartz").setCreativeTab(CreativeTabs.tabMaterials);
-    public static Item minecartTnt = (new FCItemStub(151)).setUnlocalizedName("minecartTnt");
-    public static Item minecartHopper = (new FCItemStub(152)).setUnlocalizedName("minecartHopper");
-    public static Item tntMinecart = minecartTnt;
-    public static Item hopperMinecart = minecartHopper;
+    public static Item tntMinecart = (new FCItemStub(151)).setUnlocalizedName("minecartTnt");
+    public static Item hopperMinecart = (new FCItemStub(152)).setUnlocalizedName("minecartHopper");
+    public static Item minecartTnt = tntMinecart;
+    public static Item minecartHopper = hopperMinecart;
     public static Item record13 = (new ItemRecord(2000, "13")).setUnlocalizedName("record");
     public static Item recordCat = (new ItemRecord(2001, "cat")).setUnlocalizedName("record").setCreativeTab((CreativeTabs)null);
     public static Item recordBlocks = (new ItemRecord(2002, "blocks")).setUnlocalizedName("record").setCreativeTab((CreativeTabs)null);
@@ -221,13 +219,14 @@ public class Item
      */
     protected boolean hasSubtypes = false;
     private Item containerItem = null;
+
+    /**
+     * The string representing this item's effect on a potion when used as an ingredient.
+     */
     private String potionEffect = null;
 
     /** The unlocalized name of this item. */
     private String unlocalizedName;
-
-    /** Icon index in the icons table. */
-    protected Icon itemIcon;
     public static boolean m_bSuppressConflictWarnings;
     public static final int m_iBaseHerbivoreItemFoodValue = 800;
     public static final int m_iBasePigItemFoodValue = 800;
@@ -259,30 +258,6 @@ public class Item
     {
         this.maxStackSize = par1;
         return this;
-    }
-
-    /**
-     * Returns 0 for /terrain.png, 1 for /gui/items.png
-     */
-    public int getSpriteNumber()
-    {
-        return 1;
-    }
-
-    /**
-     * Gets an icon index based on an item's damage value
-     */
-    public Icon getIconFromDamage(int par1)
-    {
-        return this.itemIcon;
-    }
-
-    /**
-     * Returns the icon index of the stack given as argument.
-     */
-    public final Icon getIconIndex(ItemStack par1ItemStack)
-    {
-        return this.getIconFromDamage(par1ItemStack.getItemDamage());
     }
 
     /**
@@ -381,7 +356,7 @@ public class Item
     /**
      * Called when a player right clicks an entity with an item.
      */
-    public boolean itemInteractionForEntity(ItemStack par1ItemStack, EntityLiving par2EntityLiving)
+    public boolean useItemOnEntity(ItemStack par1ItemStack, EntityLiving par2EntityLiving)
     {
         return false;
     }
@@ -393,23 +368,6 @@ public class Item
     {
         this.bFull3D = true;
         return this;
-    }
-
-    /**
-     * Returns True is the item is renderer in full 3D when hold.
-     */
-    public boolean isFull3D()
-    {
-        return this.bFull3D;
-    }
-
-    /**
-     * Returns true if this item should be rotated by 180 degrees around the Y axis when being held in an entities
-     * hands.
-     */
-    public boolean shouldRotateAroundWhenRendering()
-    {
-        return false;
     }
 
     /**
@@ -493,11 +451,6 @@ public class Item
         return StatCollector.translateToLocal(this.getUnlocalizedName(par1ItemStack) + ".name");
     }
 
-    public int getColorFromItemStack(ItemStack par1ItemStack, int par2)
-    {
-        return 16777215;
-    }
-
     public void onUpdate(ItemStack var1, World var2, EntityPlayer var3, int var4, boolean var5) {}
 
     /**
@@ -559,27 +512,9 @@ public class Item
         return this.potionEffect != null;
     }
 
-    /**
-     * allows items to add custom lines of information to the mouseover description
-     */
-    public void addInformation(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, List par3List, boolean par4) {}
-
     public String getItemDisplayName(ItemStack par1ItemStack)
     {
         return ("" + StringTranslate.getInstance().translateNamedKey(this.getLocalizedName(par1ItemStack))).trim();
-    }
-
-    public boolean hasEffect(ItemStack par1ItemStack)
-    {
-        return par1ItemStack.isItemEnchanted();
-    }
-
-    /**
-     * Return an item rarity from EnumRarity
-     */
-    public EnumRarity getRarity(ItemStack par1ItemStack)
-    {
-        return par1ItemStack.isItemEnchanted() ? EnumRarity.rare : EnumRarity.common;
     }
 
     /**
@@ -618,35 +553,6 @@ public class Item
         return 0;
     }
 
-    public boolean requiresMultipleRenderPasses()
-    {
-        return false;
-    }
-
-    /**
-     * Gets an icon index based on an item's damage value and the given render pass
-     */
-    public Icon getIconFromDamageForRenderPass(int par1, int par2)
-    {
-        return this.getIconFromDamage(par1);
-    }
-
-    /**
-     * returns a list of items with the same ID, but different meta (eg: dye returns 16 items)
-     */
-    public void getSubItems(int par1, CreativeTabs par2CreativeTabs, List par3List)
-    {
-        par3List.add(new ItemStack(par1, 1, 0));
-    }
-
-    /**
-     * gets the CreativeTab this item is displayed on
-     */
-    public CreativeTabs getCreativeTab()
-    {
-        return this.tabToDisplayOn;
-    }
-
     /**
      * returns this;
      */
@@ -667,11 +573,6 @@ public class Item
     public boolean getIsRepairable(ItemStack par1ItemStack, ItemStack par2ItemStack)
     {
         return false;
-    }
-
-    public void registerIcons(IconRegister par1IconRegister)
-    {
-        this.itemIcon = par1IconRegister.registerIcon(this.unlocalizedName);
     }
 
     public boolean CanItemBeUsedByPlayer(World var1, int var2, int var3, int var4, int var5, EntityPlayer var6, ItemStack var7)
@@ -997,11 +898,6 @@ public class Item
         var2.playAuxSFX(1000, var3, var4, var5, 0);
         return true;
     }
-
-    public Icon GetHopperFilterIcon()
-    {
-        return null;
-    }
     
     // ADDON EXTENDED //
     /**
@@ -1015,8 +911,6 @@ public class Item
     		throw new RuntimeException("Multiple addons attempting to replace item " + itemsList[id]);
     	}
     	else {
-    		m_bSuppressConflictWarnings = true;
-    		
     		Item newItem = null;
     		
     		Class[] parameterTypes = new Class[parameters.length + 1];
@@ -1034,12 +928,6 @@ public class Item
     			else if (type == Boolean.class) {
     				type = Boolean.TYPE;
     			}
-    			else if (type == Float.class) {
-    				type = Float.TYPE;
-    			}
-    			else if (type == Double.class) {
-    				type = Double.TYPE;
-    			}
     			else if (Block.class.isAssignableFrom(type)) {
     				type = Block.class;
     			}
@@ -1051,23 +939,17 @@ public class Item
     			parameterValues[i + 1] = parameters[i];
     		}
     		
-    			try {
-					newItem = (Item) newClass.getConstructor(parameterTypes).newInstance(parameterValues);
-				} catch (InstantiationException e) {
-					throw new RuntimeException("A problem has occured attempting to instantiate replacement for " + itemsList[id]);
-				} catch (IllegalArgumentException e) {
-					throw new RuntimeException("Incompatible types passed to specified constructor for " + itemsList[id]);
-				} catch (NoSuchMethodException e) {
-					throw new RuntimeException("No appropriate constructor found for " + itemsList[id] + ". Constructors must be public to be used in replacement.");
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+    		try {
+    			newItem = (Item) newClass.getConstructor(parameterTypes).newInstance(parameterValues);
+			} catch (Exception e) {
+				throw new RuntimeException("A problem has occured attempting to instantiate replacement for " + itemsList[id]);
+			}
     		
     		itemReplaced[id] = true;
     		Item original = itemsList[id];
     		itemsList[id] = null;
     		
-    		newItem.SetFilterableProperties(original.m_iFilterablePropertiesBitfield).SetBuoyancy(original.GetBuoyancy(0)).setCreativeTab(original.getCreativeTab());
+    		newItem.SetFilterableProperties(original.m_iFilterablePropertiesBitfield).SetBuoyancy(original.GetBuoyancy(0));
     		
     		if (original.IsIncineratedInCrucible())
     			newItem.SetIncineratedInCrucible();
@@ -1075,8 +957,6 @@ public class Item
     			newItem.SetNotIncineratedInCrucible();
     		
     		itemsList[id] = newItem;
-    		
-    		m_bSuppressConflictWarnings = false;
     		
     		return newItem;
     	}

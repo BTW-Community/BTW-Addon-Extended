@@ -2,6 +2,8 @@ server/MinecraftServer
 Block
 ComponentVillage
 EntityList
+FCBlockMouldingAndDecorative
+FCBlockSidingAndCorner
 FCEntityVillager
 FCEntityZombie
 Item

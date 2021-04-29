@@ -606,7 +606,6 @@ src/minecraft/net/minecraft/src/EntityLargeExplodeFX.java
 src/minecraft/net/minecraft/src/EntityLargeFireball.java
 src/minecraft/net/minecraft/src/EntityLavaFX.java
 src/minecraft/net/minecraft/src/EntityLightningBolt.java
-src/minecraft/net/minecraft/src/EntityList.java
 src/minecraft/net/minecraft/src/EntityLiving.java
 src/minecraft/net/minecraft/src/EntityLookHelper.java
 src/minecraft/net/minecraft/src/EntityMagmaCube.java
@@ -873,7 +872,6 @@ src/minecraft/net/minecraft/src/FCBlockMortarReceiver.java
 src/minecraft/net/minecraft/src/FCBlockMortarReceiverSlab.java
 src/minecraft/net/minecraft/src/FCBlockMortarReceiverStairs.java
 src/minecraft/net/minecraft/src/FCBlockMoulding.java
-src/minecraft/net/minecraft/src/FCBlockMouldingAndDecorative.java
 src/minecraft/net/minecraft/src/FCBlockMushroom.java
 src/minecraft/net/minecraft/src/FCBlockMushroomBrown.java
 src/minecraft/net/minecraft/src/FCBlockMushroomCap.java
@@ -941,7 +939,6 @@ src/minecraft/net/minecraft/src/FCBlockScrewPump.java
 src/minecraft/net/minecraft/src/FCBlockShaft.java
 src/minecraft/net/minecraft/src/FCBlockShovel.java
 src/minecraft/net/minecraft/src/FCBlockSidingAndCorner.java
-src/minecraft/net/minecraft/src/FCBlockSidingAndCornerAndDecorative.java
 src/minecraft/net/minecraft/src/FCBlockSign.java
 src/minecraft/net/minecraft/src/FCBlockSignWall.java
 src/minecraft/net/minecraft/src/FCBlockSilverfish.java
@@ -2732,7 +2729,6 @@ src/minecraft_server/net/minecraft/src/EntityItemFrame.java
 src/minecraft_server/net/minecraft/src/EntityJumpHelper.java
 src/minecraft_server/net/minecraft/src/EntityLargeFireball.java
 src/minecraft_server/net/minecraft/src/EntityLightningBolt.java
-src/minecraft_server/net/minecraft/src/EntityList.java
 src/minecraft_server/net/minecraft/src/EntityLiving.java
 src/minecraft_server/net/minecraft/src/EntityLookHelper.java
 src/minecraft_server/net/minecraft/src/EntityMagmaCube.java
@@ -2977,7 +2973,6 @@ src/minecraft_server/net/minecraft/src/FCBlockMortarReceiver.java
 src/minecraft_server/net/minecraft/src/FCBlockMortarReceiverSlab.java
 src/minecraft_server/net/minecraft/src/FCBlockMortarReceiverStairs.java
 src/minecraft_server/net/minecraft/src/FCBlockMoulding.java
-src/minecraft_server/net/minecraft/src/FCBlockMouldingAndDecorative.java
 src/minecraft_server/net/minecraft/src/FCBlockMushroom.java
 src/minecraft_server/net/minecraft/src/FCBlockMushroomBrown.java
 src/minecraft_server/net/minecraft/src/FCBlockMushroomCap.java
@@ -3045,7 +3040,6 @@ src/minecraft_server/net/minecraft/src/FCBlockScrewPump.java
 src/minecraft_server/net/minecraft/src/FCBlockShaft.java
 src/minecraft_server/net/minecraft/src/FCBlockShovel.java
 src/minecraft_server/net/minecraft/src/FCBlockSidingAndCorner.java
-src/minecraft_server/net/minecraft/src/FCBlockSidingAndCornerAndDecorative.java
 src/minecraft_server/net/minecraft/src/FCBlockSign.java
 src/minecraft_server/net/minecraft/src/FCBlockSignWall.java
 src/minecraft_server/net/minecraft/src/FCBlockSilverfish.java

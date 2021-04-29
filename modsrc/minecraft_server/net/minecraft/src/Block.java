@@ -1,6 +1,5 @@
 package net.minecraft.src;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Random;
 
@@ -176,8 +175,6 @@ public class Block
     public static BlockCauldron cauldron = (BlockCauldron)(new FCBlockVanillaCauldron(118)).setHardness(2.0F).setUnlocalizedName("cauldron");
     public static Block endPortal = (new FCBlockEndPortal(119, Material.portal)).setHardness(-1.0F).setResistance(6000000.0F);
     public static Block endPortalFrame = (new FCBlockEndPortalFrame(120)).setStepSound(soundGlassFootstep).setLightValue(0.125F).setHardness(-1.0F).setUnlocalizedName("endPortalFrame").setResistance(6000000.0F).setCreativeTab(CreativeTabs.tabDecorations);
-
-    /** The rock found in The End. */
     public static Block whiteStone = (new FCBlockEndStone(121, Material.rock)).setHardness(3.0F).setResistance(15.0F).setStepSound(soundStoneFootstep).setUnlocalizedName("whiteStone").setCreativeTab(CreativeTabs.tabBlock);
     public static Block dragonEgg = (new FCBlockDragonEgg(122)).setHardness(3.0F).setResistance(15.0F).setStepSound(soundStoneFootstep).setLightValue(0.125F).setUnlocalizedName("dragonEgg");
     public static Block redstoneLampIdle = (new FCBlockRedstoneLight(123, false)).setHardness(0.3F).setStepSound(soundGlassFootstep).setUnlocalizedName("redstoneLight").setCreativeTab(CreativeTabs.tabRedstone);
@@ -277,7 +274,6 @@ public class Block
 
     /** The unlocalized name of this block. */
     private String unlocalizedName;
-    protected Icon blockIcon;
     private static final int[] m_iRotatedFacingsAroundJClockwise;
     private static final int[] m_iRotatedFacingsAroundJCounterclockwise;
     private static final int[] m_iCycledFacings;
@@ -300,7 +296,6 @@ public class Block
     private int m_iHerbivoreItemFoodValue = 0;
     private int m_iBirdItemFoodValue = 0;
     private int m_iPigItemFoodValue = 0;
-    public RenderBlocks m_currentBlockRenderer = null;
     
     //ADDON EXTENDED
     //Pokes the API
@@ -469,52 +464,12 @@ public class Block
     protected final void setBlockBounds(float par1, float par2, float par3, float par4, float par5, float par6) {}
 
     /**
-     * How bright to render this block based on the light its receiving. Args: iBlockAccess, x, y, z
-     */
-    public float getBlockBrightness(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
-    {
-        return par1IBlockAccess.getBrightness(par2, par3, par4, lightValue[par1IBlockAccess.getBlockId(par2, par3, par4)]);
-    }
-
-    /**
-     * Goes straight to getLightBrightnessForSkyBlocks for Blocks, does some fancy computing for Fluids
-     */
-    public int getMixedBrightnessForBlock(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
-    {
-        return par1IBlockAccess.getLightBrightnessForSkyBlocks(par2, par3, par4, lightValue[par1IBlockAccess.getBlockId(par2, par3, par4)]);
-    }
-
-    /**
      * Returns Returns true if the given side of this block type should be rendered (if it's solid or not), if the
      * adjacent block is at the given coordinates. Args: blockAccess, x, y, z, side
      */
     public boolean isBlockSolid(IBlockAccess par1IBlockAccess, int par2, int par3, int par4, int par5)
     {
         return par1IBlockAccess.getBlockMaterial(par2, par3, par4).isSolid();
-    }
-
-    /**
-     * Retrieves the block texture to use based on the display side. Args: iBlockAccess, x, y, z, side
-     */
-    public Icon getBlockTexture(IBlockAccess par1IBlockAccess, int par2, int par3, int par4, int par5)
-    {
-        return this.getIcon(par5, par1IBlockAccess.getBlockMetadata(par2, par3, par4));
-    }
-
-    /**
-     * From the specified side and block metadata retrieves the blocks texture. Args: side, metadata
-     */
-    public Icon getIcon(int par1, int par2)
-    {
-        return this.blockIcon;
-    }
-
-    /**
-     * Returns the block texture based on the side being looked at.  Args: side
-     */
-    public final Icon getBlockTextureFromSide(int par1)
-    {
-        return this.getIcon(par1, 0);
     }
 
     /**
@@ -560,11 +515,6 @@ public class Block
      * Ticks the block if it's been scheduled
      */
     public void updateTick(World par1World, int par2, int par3, int par4, Random par5Random) {}
-
-    /**
-     * A randomly called display update to be able to add particles or other items for display
-     */
-    public void randomDisplayTick(World par1World, int par2, int par3, int par4, Random par5Random) {}
 
     /**
      * Called right before the block is destroyed by a player.  Args: world, x, y, z, metaData
@@ -686,14 +636,6 @@ public class Block
      */
     public void onBlockDestroyedByExplosion(World par1World, int par2, int par3, int par4, Explosion par5Explosion) {}
 
-    /**
-     * Returns which pass should this block be rendered on. 0 for solids and 1 for alpha
-     */
-    public int getRenderBlockPass()
-    {
-        return 0;
-    }
-
     public boolean canPlaceBlockOnSide(World par1World, int par2, int par3, int par4, int par5, ItemStack par6ItemStack)
     {
         return this.canPlaceBlockOnSide(par1World, par2, par3, par4, par5);
@@ -755,7 +697,7 @@ public class Block
     /**
      * returns the block bounderies minX value
      */
-    public final double getBlockBoundsMinX()
+    public final double getMinX()
     {
         return this.minX;
     }
@@ -798,28 +740,6 @@ public class Block
     public final double getBlockBoundsMaxZ()
     {
         return this.maxZ;
-    }
-
-    public int getBlockColor()
-    {
-        return 16777215;
-    }
-
-    /**
-     * Returns the color this block should be rendered. Used by leaves.
-     */
-    public int getRenderColor(int par1)
-    {
-        return 16777215;
-    }
-
-    /**
-     * Returns a integer with hex for 0xrrggbb with this color multiplied against the blocks color. Note only called
-     * when first determining what to render.
-     */
-    public int colorMultiplier(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
-    {
-        return 16777215;
     }
 
     /**
@@ -957,14 +877,6 @@ public class Block
     }
 
     /**
-     * Returns the unlocalized name without the tile. prefix. Caution: client-only.
-     */
-    public String getUnlocalizedName2()
-    {
-        return this.unlocalizedName;
-    }
-
-    /**
      * Called when the block receives a BlockEvent - see World.addBlockEvent. By default, passes it on to the tile
      * entity at this location. Args: world, x, y, z, blockID, EventID, event parameter
      */
@@ -1000,25 +912,9 @@ public class Block
     }
 
     /**
-     * Returns the default ambient occlusion value based on block opacity
-     */
-    public float getAmbientOcclusionLightValue(IBlockAccess par1IBlockAccess, int par2, int par3, int par4)
-    {
-        return par1IBlockAccess.isBlockNormalCube(par2, par3, par4) ? 0.2F : 1.0F;
-    }
-
-    /**
      * Block's chance to react to an entity falling on it.
      */
     public void onFallenUpon(World par1World, int par2, int par3, int par4, Entity par5Entity, float par6) {}
-
-    /**
-     * only called by clickMiddleMouseButton , and passed to inventory.setCurrentItem (along with isCreative)
-     */
-    public int idPicked(World par1World, int par2, int par3, int par4)
-    {
-        return this.blockID;
-    }
 
     /**
      * Get the block's damage value (for use with pick block).
@@ -1028,17 +924,6 @@ public class Block
         return this.damageDropped(par1World.getBlockMetadata(par2, par3, par4));
     }
 
-    /**
-     * returns a list of blocks with the same ID, but different meta (eg: wood returns 4 blocks)
-     */
-    public void getSubBlocks(int par1, CreativeTabs par2CreativeTabs, List par3List)
-    {
-        par3List.add(new ItemStack(par1, 1, 0));
-    }
-
-    /**
-     * Returns the CreativeTab to display the given block on.
-     */
     public CreativeTabs getCreativeTabToDisplayOn()
     {
         return this.displayOnCreativeTab;
@@ -1067,14 +952,6 @@ public class Block
      * currently only used by BlockCauldron to incrament meta-data during rain
      */
     public void fillWithRain(World par1World, int par2, int par3, int par4) {}
-
-    /**
-     * Returns true only if block is flowerPot
-     */
-    public boolean isFlowerPot()
-    {
-        return false;
-    }
 
     public boolean func_82506_l()
     {
@@ -1122,23 +999,6 @@ public class Block
     public int getComparatorInputOverride(World par1World, int par2, int par3, int par4, int par5)
     {
         return 0;
-    }
-
-    /**
-     * When this method is called, your block should register all the icons it needs with the given IconRegister. This
-     * is the only chance you get to register icons.
-     */
-    public void registerIcons(IconRegister par1IconRegister)
-    {
-        this.blockIcon = par1IconRegister.registerIcon(this.unlocalizedName);
-    }
-
-    /**
-     * Gets the icon name of the ItemBlock corresponding to this block. Used by hoppers.
-     */
-    public String getItemIconName()
-    {
-        return null;
     }
 
     public boolean IsNormalCube(IBlockAccess var1, int var2, int var3, int var4)
@@ -2716,189 +2576,6 @@ public class Block
     {
         return true;
     }
-
-    /**
-     * Returns true if the given side of this block type should be rendered, if the adjacent block is at the given
-     * coordinates.  Args: blockAccess, x, y, z, side
-     */
-    public boolean shouldSideBeRendered(IBlockAccess par1IBlockAccess, int par2, int par3, int par4, int par5)
-    {
-        Block var6 = blocksList[par1IBlockAccess.getBlockId(par2, par3, par4)];
-        return var6 != null ? var6.ShouldRenderNeighborFullFaceSide(par1IBlockAccess, par2, par3, par4, par5) : true;
-    }
-
-    public boolean ShouldRenderNeighborHalfSlabSide(IBlockAccess var1, int var2, int var3, int var4, int var5, boolean var6)
-    {
-        return !this.isOpaqueCube();
-    }
-
-    public boolean ShouldRenderNeighborFullFaceSide(IBlockAccess var1, int var2, int var3, int var4, int var5)
-    {
-        return !this.isOpaqueCube();
-    }
-
-    public boolean RenderBlock(RenderBlocks var1, int var2, int var3, int var4)
-    {
-        var1.setRenderBounds(this.GetBlockBoundsFromPoolBasedOnState(var1.blockAccess, var2, var3, var4));
-        return var1.renderStandardBlock(this, var2, var3, var4);
-    }
-
-    public void RenderBlockSecondPass(RenderBlocks var1, int var2, int var3, int var4, boolean var5) {}
-
-    public boolean RenderBlockWithTexture(RenderBlocks var1, int var2, int var3, int var4, Icon var5)
-    {
-        var1.setOverrideBlockTexture(var5);
-        boolean var6;
-
-        if (!this.renderAsNormalBlock())
-        {
-            var6 = this.RenderBlock(var1, var2, var3, var4);
-        }
-        else
-        {
-            var1.setRenderBounds(this.GetBlockBoundsFromPoolBasedOnState(var1.blockAccess, var2, var3, var4));
-            var6 = var1.renderStandardBlock(this, var2, var3, var4);
-        }
-
-        var1.clearOverrideBlockTexture();
-        return var6;
-    }
-
-    public AxisAlignedBB GetBlockBoundsFromPoolForItemRender(int var1)
-    {
-        return this.GetFixedBlockBoundsFromPool();
-    }
-
-    public void RenderBlockAsItem(RenderBlocks var1, int var2, float var3)
-    {
-        var1.renderBlockAsItemVanilla(this, var2, var3);
-    }
-
-    public boolean DoesItemRenderAsBlock(int var1)
-    {
-        return RenderBlocks.DoesRenderIDRenderItemIn3d(this.getRenderType());
-    }
-
-    public void RenderCookingByKilnOverlay(RenderBlocks var1, int var2, int var3, int var4, boolean var5)
-    {
-        if (var5)
-        {
-            IBlockAccess var6 = var1.blockAccess;
-
-            if (!var1.hasOverrideBlockTexture() && this.GetCanBeCookedByKiln(var6, var2, var3, var4))
-            {
-                int var7 = var6.getBlockId(var2, var3 - 1, var4);
-
-                if (var7 == FCBetterThanWolves.fcKiln.blockID)
-                {
-                    Icon var8 = FCBetterThanWolves.fcKiln.GetCookTextureForCurrentState(var6, var2, var3 - 1, var4);
-
-                    if (var8 != null)
-                    {
-                        this.RenderBlockWithTexture(var1, var2, var3, var4, var8);
-                    }
-                }
-            }
-        }
-    }
-
-    public boolean ShouldRenderWhileFalling(World var1, EntityFallingSand var2)
-    {
-        int var3 = MathHelper.floor_double(var2.posX);
-        int var4 = MathHelper.floor_double(var2.posY);
-        int var5 = MathHelper.floor_double(var2.posZ);
-        int var6 = var1.getBlockId(var3, var4, var5);
-        return var6 != var2.blockID;
-    }
-
-    public void RenderFallingBlock(RenderBlocks var1, int var2, int var3, int var4, int var5)
-    {
-        var1.setRenderBounds(this.GetFixedBlockBoundsFromPool());
-        var1.RenderStandardFallingBlock(this, var2, var3, var4, var5);
-    }
-
-    public boolean ShouldSideBeRenderedOnFallingBlock(int var1, int var2)
-    {
-        return true;
-    }
-
-    public void RenderBlockMovedByPiston(RenderBlocks var1, int var2, int var3, int var4)
-    {
-        var1.renderBlockAllFaces(this, var2, var3, var4);
-    }
-
-    /**
-     * Returns the bounding box of the wired rectangular prism to render.
-     */
-    public AxisAlignedBB getSelectedBoundingBoxFromPool(World par1World, int par2, int par3, int par4)
-    {
-        return this.GetBlockBoundsFromPoolBasedOnState(par1World, par2, par3, par4).offset((double)par2, (double)par3, (double)par4);
-    }
-
-    public AxisAlignedBB getSelectedBoundingBoxFromPool(World var1, MovingObjectPosition var2)
-    {
-        return this.getSelectedBoundingBoxFromPool(var1, var2.blockX, var2.blockY, var2.blockZ);
-    }
-
-    public Icon GetIconByIndex(int var1)
-    {
-        return this.blockIcon;
-    }
-
-    public Icon GetHopperFilterIcon()
-    {
-        return null;
-    }
-
-    protected void RenderCrossHatch(RenderBlocks var1, int var2, int var3, int var4, Icon var5, double var6, double var8)
-    {
-        Tessellator var10 = Tessellator.instance;
-        double var11 = (double)var2;
-        double var13 = (double)var3 + var8;
-        double var15 = (double)var4;
-        double var17 = (double)var5.getMinU();
-        double var19 = (double)var5.getMinV();
-        double var21 = (double)var5.getMaxU();
-        double var23 = (double)var5.getMaxV();
-        double var25 = var11 + 1.0D - var6;
-        double var27 = var11 + var6;
-        double var31 = var15 + 1.0D;
-        var10.addVertexWithUV(var25, var13 + 1.0D, var15, var17, var19);
-        var10.addVertexWithUV(var25, var13 + 0.0D, var15, var17, var23);
-        var10.addVertexWithUV(var25, var13 + 0.0D, var31, var21, var23);
-        var10.addVertexWithUV(var25, var13 + 1.0D, var31, var21, var19);
-        var10.addVertexWithUV(var25, var13 + 1.0D, var31, var17, var19);
-        var10.addVertexWithUV(var25, var13 + 0.0D, var31, var17, var23);
-        var10.addVertexWithUV(var25, var13 + 0.0D, var15, var21, var23);
-        var10.addVertexWithUV(var25, var13 + 1.0D, var15, var21, var19);
-        var10.addVertexWithUV(var27, var13 + 1.0D, var31, var17, var19);
-        var10.addVertexWithUV(var27, var13 + 0.0D, var31, var17, var23);
-        var10.addVertexWithUV(var27, var13 + 0.0D, var15, var21, var23);
-        var10.addVertexWithUV(var27, var13 + 1.0D, var15, var21, var19);
-        var10.addVertexWithUV(var27, var13 + 1.0D, var15, var17, var19);
-        var10.addVertexWithUV(var27, var13 + 0.0D, var15, var17, var23);
-        var10.addVertexWithUV(var27, var13 + 0.0D, var31, var21, var23);
-        var10.addVertexWithUV(var27, var13 + 1.0D, var31, var21, var19);
-        var27 = var11 + 1.0D;
-        double var29 = var15 + var6;
-        var31 = var15 + 1.0D - var6;
-        var10.addVertexWithUV(var11, var13 + 1.0D, var29, var17, var19);
-        var10.addVertexWithUV(var11, var13 + 0.0D, var29, var17, var23);
-        var10.addVertexWithUV(var27, var13 + 0.0D, var29, var21, var23);
-        var10.addVertexWithUV(var27, var13 + 1.0D, var29, var21, var19);
-        var10.addVertexWithUV(var27, var13 + 1.0D, var29, var17, var19);
-        var10.addVertexWithUV(var27, var13 + 0.0D, var29, var17, var23);
-        var10.addVertexWithUV(var11, var13 + 0.0D, var29, var21, var23);
-        var10.addVertexWithUV(var11, var13 + 1.0D, var29, var21, var19);
-        var10.addVertexWithUV(var27, var13 + 1.0D, var31, var17, var19);
-        var10.addVertexWithUV(var27, var13 + 0.0D, var31, var17, var23);
-        var10.addVertexWithUV(var11, var13 + 0.0D, var31, var21, var23);
-        var10.addVertexWithUV(var11, var13 + 1.0D, var31, var21, var19);
-        var10.addVertexWithUV(var11, var13 + 1.0D, var31, var17, var19);
-        var10.addVertexWithUV(var11, var13 + 0.0D, var31, var17, var23);
-        var10.addVertexWithUV(var27, var13 + 0.0D, var31, var21, var23);
-        var10.addVertexWithUV(var27, var13 + 1.0D, var31, var21, var19);
-    }
     
     // ADDON EXTENDED //
     /**
@@ -2931,12 +2608,6 @@ public class Block
     			}
     			else if (type == Boolean.class) {
     				type = Boolean.TYPE;
-    			}
-    			else if (type == Float.class) {
-    				type = Float.TYPE;
-    			}
-    			else if (type == Double.class) {
-    				type = Double.TYPE;
     			}
     			else if (Block.class.isAssignableFrom(type)) {
     				type = Block.class;

@@ -15,18 +15,18 @@ public class AddonDataHandler extends AddonExt {
 	}
 
 	public AddonDataHandler() {
-		super("Extended Addon API", "1.1.1", "API");
+		super("Extended Addon API", "1.1.0", "API");
 	}
 
 	@Override
 	public void Initialize() {
-		FCAddOnHandler.LogMessage("Initializing Addon Ext Handler...");
+		FCAddOnHandler.LogMessage("Initializing Villager Handler...");
 		initFarmer();
 		initLibrarian();
 		initPriest();
 		initBlacksmith();
 		initButcher();
-		FCAddOnHandler.LogMessage("Addon Ext Handler Initialized");
+		FCAddOnHandler.LogMessage("Village Handler Initialized");
 	}
 	
 	public void initFarmer() {
@@ -59,6 +59,6 @@ public class AddonDataHandler extends AddonExt {
 
 	public String GetLanguageFilePrefix()
 	{
-		return "AddonExt";
+		return "AddonVH";
 	}
 }
