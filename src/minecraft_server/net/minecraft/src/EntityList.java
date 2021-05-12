@@ -129,7 +129,6 @@ public class EntityList
 
         if (var2 != null)
         {
-        	System.out.println(par0NBTTagCompound);
             var2.readFromNBT(par0NBTTagCompound);
         }
         else

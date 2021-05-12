@@ -1,8 +1,10 @@
 Version 1.1.1
 [list]
+[*]Fixed an issue where opening a world from before API 1.1.0 would delete villagers.
+[*]Fixed an issue where curing or attacking villagers would cause the game to crash.
+[*]Fixed an issue where villager spawn eggs did not have names.
 [*]Fixed an issue where maps would cause severe performance issues.
 [*]Fixed an issue where spawning an item entity would log errors to the console. These errors never caused real issues and were simply a result of running code on both the client and server when it should've only been run on the server.
-[*]Fixed an issue where curing or attacking villagers would cause the game to crash.
 [/list]
 
 Version 1.1.0
