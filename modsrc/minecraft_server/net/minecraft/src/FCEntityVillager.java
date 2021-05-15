@@ -1069,6 +1069,4 @@ public abstract class FCEntityVillager extends EntityVillager
 	{
 		m_iUpdateTradesCountdown = 1;
 	}
-
-	//----------- Client Side Functionality -----------//
 }

@@ -15,7 +15,7 @@ public class AddonDataHandler extends AddonExt {
 	}
 
 	public AddonDataHandler() {
-		super("Extended Addon API", "1.1.1", "API");
+		super("Extended Addon API", "1.1.3", "API");
 	}
 
 	@Override
