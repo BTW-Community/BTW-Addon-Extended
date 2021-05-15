@@ -11,20 +11,6 @@ public class ItemMap extends ItemMapBase
         this.setHasSubtypes(true);
     }
 
-    public static MapData getMPMapData(short par0, World par1World)
-    {
-        String var2 = "map_" + par0;
-        MapData var3 = (MapData)par1World.loadItemData(MapData.class, var2);
-
-        if (var3 == null)
-        {
-            var3 = new MapData(var2);
-            par1World.setItemData(var2, var3);
-        }
-
-        return var3;
-    }
-
     public MapData getMapData(ItemStack par1ItemStack, World par2World)
     {
         String var3 = "map_" + par1ItemStack.getItemDamage();

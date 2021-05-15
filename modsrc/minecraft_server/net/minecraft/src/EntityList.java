@@ -28,7 +28,12 @@ public class EntityList
     /**
      * adds a mapping between Entity classes and both a string representation and an ID
      */
+    // FCMOD: Code change
+    /*
+    private static void addMapping(Class par0Class, String par1Str, int par2)
+    */
     public static void addMapping(Class par0Class, String par1Str, int par2)
+    // END FCMOD
     {
         stringToClassMapping.put(par1Str, par0Class);
         classToStringMapping.put(par0Class, par1Str);
@@ -59,7 +64,12 @@ public class EntityList
 
             if (var3 != null)
             {
-                var2 = (Entity)var3.getConstructor(new Class[] {World.class}).newInstance(new Object[] {par1World});
+            	if (FCEntityVillager.class.equals(var3)) {
+            		var2 = FCEntityVillager.createVillager(par1World);
+            	}
+            	else {
+            		var2 = (Entity)var3.getConstructor(new Class[] {World.class}).newInstance(new Object[] {par1World});
+            	}
             }
         }
         catch (Exception var4)
@@ -102,7 +112,14 @@ public class EntityList
 
             if (var3 != null)
             {
-                var2 = (Entity)var3.getConstructor(new Class[] {World.class}).newInstance(new Object[] {par1World});
+            	if (FCEntityVillager.class.equals(var3)) {
+            		int profession = par0NBTTagCompound.getInteger("Profession");
+            		
+            		var2 = FCEntityVillager.createVillagerFromProfession(par1World, profession);
+            	}
+            	else {
+            		var2 = (Entity)var3.getConstructor(new Class[] {World.class}).newInstance(new Object[] {par1World});
+            	}
             }
         }
         catch (Exception var4)
@@ -116,7 +133,7 @@ public class EntityList
         }
         else
         {
-            //par1World.getWorldLogAgent().logWarning("Skipping Entity with id " + par0NBTTagCompound.getString("id"));
+            par1World.getWorldLogAgent().func_98236_b("Skipping Entity with id " + par0NBTTagCompound.getString("id"));
         }
 
         return var2;
@@ -125,7 +142,6 @@ public class EntityList
     /**
      * Create a new instance of an entity in the world by using an entity ID.
      */
-    //ADDON EXTENDED MODIFIED
     public static Entity createEntityByID(int par0, World par1World)
     {
         Entity var2 = null;
@@ -151,7 +167,7 @@ public class EntityList
 
         if (var2 == null)
         {
-            //par1World.getWorldLogAgent().logWarning("Skipping Entity with id " + par0);
+            par1World.getWorldLogAgent().func_98236_b("Skipping Entity with id " + par0);
         }
 
         return var2;
@@ -190,127 +206,6 @@ public class EntityList
         Class var1 = getClassFromID(par0);
         return var1 != null ? (String)classToStringMapping.get(var1) : null;
     }
-
-    public static void AddMapping(Class var0, String var1, int var2)
-    {
-        addMapping(var0, var1, var2);
-    }
-
-    public static boolean RemoveMapping(String var0, boolean var1)
-    {
-        Integer var2 = (Integer)stringToIDMapping.get(var0);
-
-        if (var2 != null)
-        {
-            Class var3 = (Class)IDtoClassMapping.get(Integer.valueOf(var2.intValue()));
-
-            if (var3 != null)
-            {
-                stringToClassMapping.remove(var0);
-                classToStringMapping.remove(var3);
-                IDtoClassMapping.remove(var2);
-                classToIDMapping.remove(var3);
-                stringToIDMapping.remove(var0);
-
-                if (var1)
-                {
-                    entityEggs.remove(var2);
-                }
-
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public static boolean ReplaceExistingMapping(Class var0, String var1)
-    {
-        Integer var2 = (Integer)stringToIDMapping.get(var1);
-
-        if (var2 != null && RemoveMapping(var1, false))
-        {
-            addMapping(var0, var1, var2.intValue());
-        }
-
-        return false;
-    }
-
-    // ADDON EXTENDED //
-    /**
-     * Replaces entity mapping but leaves the mapping from class to id so the game won't crash if it tries to spawn something of a class which has been replaced
-     * @param newClass The new class to be added to the mapping
-     * @param entityName The internal name of the entity
-     * @return
-     */
-    public static boolean replaceExistingMappingSafe(Class newClass, String entityName) {
-        int id = (Integer) stringToIDMapping.get(entityName);
-        
-        for (BiomeGenBase b : BiomeGenBase.biomeList) {
-        	if (b != null) {
-        		List<SpawnListEntry> monsterList = b.getSpawnableList(EnumCreatureType.monster);
-        		List<SpawnListEntry> creatureList = b.getSpawnableList(EnumCreatureType.creature);
-        		List<SpawnListEntry> waterList = b.getSpawnableList(EnumCreatureType.waterCreature);
-        		List<SpawnListEntry> ambientList = b.getSpawnableList(EnumCreatureType.ambient);
-        		
-        		for (SpawnListEntry e : monsterList) {
-        			if (e.entityClass == stringToClassMapping.get(entityName)) {
-        				e.entityClass = newClass;
-        			}
-        		}
-        		
-        		for (SpawnListEntry e : creatureList) {
-        			if (e.entityClass == stringToClassMapping.get(entityName)) {
-        				e.entityClass = newClass;
-        			}
-        		}
-        		
-        		for (SpawnListEntry e : waterList) {
-        			if (e.entityClass == stringToClassMapping.get(entityName)) {
-        				e.entityClass = newClass;
-        			}
-        		}
-        		
-        		for (SpawnListEntry e : ambientList) {
-        			if (e.entityClass == stringToClassMapping.get(entityName)) {
-        				e.entityClass = newClass;
-        			}
-        		}
-        	}
-        }
-
-        if (removeMappingSafe(entityName, false)) {
-            addMapping(newClass, entityName, id);
-        }
-
-        return false;
-    }
-
-    public static boolean removeMappingSafe(String var0, boolean var1)
-    {
-        Integer var2 = (Integer)stringToIDMapping.get(var0);
-
-        if (var2 != null)
-        {
-            Class var3 = (Class)IDtoClassMapping.get(Integer.valueOf(var2.intValue()));
-
-            if (var3 != null)
-            {
-                stringToClassMapping.remove(var0);
-                IDtoClassMapping.remove(var2);
-
-                if (var1)
-                {
-                    entityEggs.remove(var2);
-                }
-
-                return true;
-            }
-        }
-
-        return false;
-    }
-    // ADDON EXTENDED //
 
     static
     {
@@ -368,5 +263,133 @@ public class EntityList
         addMapping(EntityIronGolem.class, "VillagerGolem", 99);
         addMapping(EntityVillager.class, "Villager", 120, 5651507, 12422002);
         addMapping(EntityEnderCrystal.class, "EnderCrystal", 200);
+    }
+    
+    public static void AddMapping( Class entityClass, String sName, int iID )
+    {
+    	addMapping( entityClass, sName, iID );
+    }
+    
+    public static boolean RemoveMapping( String sName, boolean bRemoveEgg )
+    {
+    	Integer iID = (Integer)stringToIDMapping.get( sName );
+    		
+    	if ( iID != null )
+    	{
+	    	Class mappedClass = (Class)IDtoClassMapping.get( Integer.valueOf( iID ) );
+	    	
+	    	if ( mappedClass != null )
+	    	{
+	    		stringToClassMapping.remove( sName );
+	    		classToStringMapping.remove( mappedClass );
+	    		IDtoClassMapping.remove( iID );
+	    		classToIDMapping.remove( mappedClass );
+	    		stringToIDMapping.remove( sName );
+	    		
+	    		if ( bRemoveEgg )
+	    		{
+		    		// may or may not have an egg, but this is a safe operation
+	    			
+	    			entityEggs.remove( iID );
+	    		}
+	    		
+	    		return true;
+	    	}
+    	}
+    	
+    	return false;
+    }
+    
+    public static boolean ReplaceExistingMapping( Class newClass, String sName )
+    {    	
+    	Integer iID = (Integer)stringToIDMapping.get( sName );
+		
+    	if ( iID != null )
+    	{
+    		if ( RemoveMapping( sName, false ) ) // egg mapping intentionally left in place
+    		{    		
+    			addMapping( newClass, sName, iID );
+    		}
+    	}
+    	
+    	return false;
+    }
+    
+    /**
+     * Replaces entity mapping but leaves the mapping from class to id so the game won't crash if it tries to spawn something of a class which has been replaced
+     * @param newClass The new class to be added to the mapping
+     * @param entityName The internal name of the entity
+     * @return
+     */
+    public static boolean replaceExistingMappingSafe(Class newClass, String entityName) {
+        int id = (Integer) stringToIDMapping.get(entityName);
+        
+        // Code is currently non working for some reason
+        // TODO: fix for spawnable mobs
+        /*
+        for (BiomeGenBase b : BiomeGenBase.biomeList) {
+        	if (b != null) {
+        		List<SpawnListEntry> monsterList = b.getSpawnableList(EnumCreatureType.monster);
+        		List<SpawnListEntry> creatureList = b.getSpawnableList(EnumCreatureType.creature);
+        		List<SpawnListEntry> waterList = b.getSpawnableList(EnumCreatureType.waterCreature);
+        		List<SpawnListEntry> ambientList = b.getSpawnableList(EnumCreatureType.ambient);
+        		
+        		for (SpawnListEntry e : monsterList) {
+        			if (e.entityClass == stringToClassMapping.get(entityName)) {
+        				e.entityClass = newClass;
+        			}
+        		}
+        		
+        		for (SpawnListEntry e : creatureList) {
+        			if (e.entityClass == stringToClassMapping.get(entityName)) {
+        				e.entityClass = newClass;
+        			}
+        		}
+        		
+        		for (SpawnListEntry e : waterList) {
+        			if (e.entityClass == stringToClassMapping.get(entityName)) {
+        				e.entityClass = newClass;
+        			}
+        		}
+        		
+        		for (SpawnListEntry e : ambientList) {
+        			if (e.entityClass == stringToClassMapping.get(entityName)) {
+        				e.entityClass = newClass;
+        			}
+        		}
+        	}
+        }
+        */
+
+        if (removeMappingSafe(entityName, false)) {
+            addMapping(newClass, entityName, id);
+        }
+
+        return false;
+    }
+
+    public static boolean removeMappingSafe(String var0, boolean var1)
+    {
+        Integer var2 = (Integer)stringToIDMapping.get(var0);
+
+        if (var2 != null)
+        {
+            Class var3 = (Class)IDtoClassMapping.get(Integer.valueOf(var2.intValue()));
+
+            if (var3 != null)
+            {
+                stringToClassMapping.remove(var0);
+                IDtoClassMapping.remove(var2);
+
+                if (var1)
+                {
+                    entityEggs.remove(var2);
+                }
+
+                return true;
+            }
+        }
+
+        return false;
     }
 }
