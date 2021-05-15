@@ -1855,7 +1855,6 @@ src/minecraft/net/minecraft/src/Packet209SetPlayerTeam.java
 src/minecraft/net/minecraft/src/Packet20NamedEntitySpawn.java
 src/minecraft/net/minecraft/src/Packet22Collect.java
 src/minecraft/net/minecraft/src/Packet23VehicleSpawn.java
-src/minecraft/net/minecraft/src/Packet24MobSpawn.java
 src/minecraft/net/minecraft/src/Packet250CustomPayload.java
 src/minecraft/net/minecraft/src/Packet252SharedKey.java
 src/minecraft/net/minecraft/src/Packet253ServerAuthData.java
@@ -3726,7 +3725,6 @@ src/minecraft_server/net/minecraft/src/Packet209SetPlayerTeam.java
 src/minecraft_server/net/minecraft/src/Packet20NamedEntitySpawn.java
 src/minecraft_server/net/minecraft/src/Packet22Collect.java
 src/minecraft_server/net/minecraft/src/Packet23VehicleSpawn.java
-src/minecraft_server/net/minecraft/src/Packet24MobSpawn.java
 src/minecraft_server/net/minecraft/src/Packet250CustomPayload.java
 src/minecraft_server/net/minecraft/src/Packet252SharedKey.java
 src/minecraft_server/net/minecraft/src/Packet253ServerAuthData.java
