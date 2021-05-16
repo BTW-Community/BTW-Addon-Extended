@@ -162,14 +162,9 @@ public class FCEntityZombie extends EntityZombie
      */
     protected void convertToVillager()
     {
-        FCEntityVillager var1 = FCEntityVillager.createVillager(this.worldObj);
+        FCEntityVillager var1 = FCEntityVillager.createVillagerFromProfession(this.worldObj, this.m_iVillagerClass);
         var1.func_82149_j(this);
         var1.initCreature();
-
-        if (this.m_iVillagerClass >= 0)
-        {
-            var1.setProfession(this.m_iVillagerClass);
-        }
 
         if (this.m_iVillagerClass == 0)
         {
